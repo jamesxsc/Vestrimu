@@ -3,6 +3,8 @@ package com.georlegacy.general.vestrimu;
 import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
+import com.georlegacy.general.vestrimu.core.managers.SQLManager;
+import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import net.dv8tion.jda.core.AccountType;
@@ -17,6 +19,8 @@ public class Vestrimu {
 
     // Managers
     @Inject private CommandManager commandManager;
+    @Inject private WebhookManager webhookManager;
+    @Inject private SQLManager sqlManager;
 
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
@@ -27,12 +31,24 @@ public class Vestrimu {
         return jda;
     }
 
+    private static Vestrimu instance;
+
+    public static Vestrimu getInstance() {
+        return instance;
+    }
+
     public Vestrimu() {
+        instance = this;
         BinderModule module = new BinderModule(this.getClass());
         Injector injector = module.createInjector();
         injector.injectMembers(this);
 
         startBot();
+
+        // Adding commands
+        commandManager.addCommand(evaluateCommand);
+
+        webhookManager.loadWebhooks();
     }
 
 
@@ -50,9 +66,6 @@ public class Vestrimu {
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
-
-        // Adding commands
-        commandManager.addCommand(evaluateCommand);
     }
 
 }

@@ -4,16 +4,38 @@ import com.georlegacy.general.vestrimu.Vestrimu;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.entities.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WebhookManager {
-    @Inject private Vestrimu vestrimu;
 
     private Webhook webhook;
 
+    public Webhook getWebhook() {
+        return webhook;
+    }
+
     public WebhookManager() {
-        for (Guild guild : vestrimu.getJDA().getGuilds()) {
+
+    }
+
+    public void loadWebhook(Guild guild) {
+        List<Webhook> webhooks = getOwnWebhooks(guild);
+        if (webhooks.isEmpty()) {
+            addWebhook(guild);
+            return;
+        }
+        if (webhooks.size() > 1) {
+            deleteWebhooks(webhooks);
+            addWebhook(guild);
+            return;
+        }
+        this.webhook = webhooks.get(0);
+    }
+
+    public void loadWebhooks() {
+        for (Guild guild : Vestrimu.getInstance().getJDA().getGuilds()) {
             List<Webhook> webhooks = getOwnWebhooks(guild);
             if (webhooks.isEmpty()) {
                 addWebhook(guild);
@@ -44,7 +66,7 @@ public class WebhookManager {
         List<Webhook> toReturn = new ArrayList<Webhook>();
         List<Webhook> webhooks = guild.getWebhooks().complete();
         for (Webhook w : webhooks) {
-            if (w.getOwner().getUser().getId().equals(vestrimu.getJDA().getSelfUser().getId())) {
+            if (w.getOwner().getUser().getId().equals(Vestrimu.getInstance().getJDA().getSelfUser().getId())) {
                 toReturn.add(w);
                 System.out.println("we are the owner");
             }
@@ -54,7 +76,11 @@ public class WebhookManager {
     }
 
     private void addWebhook(Guild guild) {
-
+        try {
+            this.webhook = guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).complete();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void deleteWebhooks(List<Webhook> webhooks) {

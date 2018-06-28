@@ -51,7 +51,7 @@
                 <filtering>true</filtering>
                 <directory>${basedir}/src/main/resources/</directory>
                 <includes>
-
+                    <include>icon.png</include>
                 </includes>
             </resource>
         </resources>
@@ -82,6 +82,17 @@
             <artifactId>guice</artifactId>
             <version>3.0</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.0</version>
+        </dependency>
+
 
     </dependencies>
 

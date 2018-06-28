@@ -38,7 +38,7 @@ public class EvaluateCommand extends Command {
             Object output = scriptEngine.eval(String.join(" ", args));
             System.out.println(output);
             if (output == null) {
-                channel.sendMessage(":white_check_mark:").queue();
+                channel.sendMessage(":white_check_mark: ").queue();
             } else {
                 channel.sendMessage(":white_check_mark:\n `" + output + "`").queue();
             }
