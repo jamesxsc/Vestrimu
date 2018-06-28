@@ -1,13 +1,14 @@
 package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
-import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import net.dv8tion.jda.core.entities.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class WebhookManager {
 
     private Webhook webhook;

@@ -28,7 +28,7 @@ public class Vestrimu {
     // Managers
     @Getter @Inject private CommandManager commandManager;
     @Inject private WebhookManager webhookManager;
-    @Getter @Inject private SQLManager sqlManager;
+    @Inject private SQLManager sqlManager;
 
     // Listeners
     @Inject private BotMentionListener botMentionListener;

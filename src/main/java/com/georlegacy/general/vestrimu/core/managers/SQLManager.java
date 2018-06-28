@@ -3,9 +3,11 @@ package com.georlegacy.general.vestrimu.core.managers;
 import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.google.inject.Singleton;
 
 import java.sql.*;
 
+@Singleton
 public class SQLManager {
 
     private Connection connection;

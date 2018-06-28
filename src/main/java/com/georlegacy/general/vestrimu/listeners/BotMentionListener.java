@@ -2,8 +2,10 @@ package com.georlegacy.general.vestrimu.listeners;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
+import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
+import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -17,12 +19,14 @@ import java.util.List;
 
 public class BotMentionListener extends ListenerAdapter {
 
+    @Inject private SQLManager sqlManager;
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
-        GuildConfiguration configuration = Vestrimu.getInstance().getGuildConfigs().getOrDefault(event.getGuild().getId(), Vestrimu.getInstance().getSqlManager().readGuild(event.getGuild().getId()));
+        GuildConfiguration configuration = Vestrimu.getInstance().getGuildConfigs().getOrDefault(event.getGuild().getId(), sqlManager.readGuild(event.getGuild().getId()));
 
         if (message.getContentRaw().equals(event.getGuild().getMemberById(Constants.VESTRIMU_ID).getAsMention())) {
 

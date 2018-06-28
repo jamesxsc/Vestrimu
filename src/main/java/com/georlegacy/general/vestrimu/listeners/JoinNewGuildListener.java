@@ -1,8 +1,10 @@
 package com.georlegacy.general.vestrimu.listeners;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
+import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
+import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -14,6 +16,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class JoinNewGuildListener extends ListenerAdapter {
+
+    @Inject private SQLManager sqlManager;
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -33,8 +37,8 @@ public class JoinNewGuildListener extends ListenerAdapter {
                     event.getGuild().leave().queue();
                     return;
                 }
-                if (Vestrimu.getInstance().getSqlManager().containsGuild(guild.getId())) {
-                    GuildConfiguration configuration = Vestrimu.getInstance().getSqlManager().readGuild(guild.getId());
+                if (sqlManager.containsGuild(guild.getId())) {
+                    GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
                     EmbedBuilder eb = new EmbedBuilder();
                     eb
                             .setTitle("Hello")
@@ -51,7 +55,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                                 .queue(role ->
                                         configuration.setBotaccessroleid(role.getId())
                                 );
-                    Vestrimu.getInstance().getSqlManager().updateGuild(configuration);
+                    sqlManager.updateGuild(configuration);
                     }
                     return;
                 }
@@ -68,7 +72,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                         .setColor(Constants.VESTRIMU_PURPLE)
                         .setName("Vestrimu Access")
                         .queue(role -> {
-                            Vestrimu.getInstance().getSqlManager().writeGuild(new GuildConfiguration(
+                            sqlManager.writeGuild(new GuildConfiguration(
                                     guild.getId(),
                                     role.getId(),
                                     "-",
