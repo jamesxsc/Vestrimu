@@ -1,8 +1,7 @@
 package com.georlegacy.general.vestrimu.commands;
 
+import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.core.Command;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -10,6 +9,10 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -31,12 +34,10 @@ public class EvaluateCommand extends Command {
         scriptEngine.put("guild", event.getGuild());
         scriptEngine.put("channel", channel);
         scriptEngine.put("author", event.getAuthor());
-
-        System.out.println(String.join(" ", args));
+        scriptEngine.put("sql", new SQL());
 
         try {
             Object output = scriptEngine.eval(String.join(" ", args));
-            System.out.println(output);
             if (output == null) {
                 channel.sendMessage(":white_check_mark: ").queue();
             } else {
@@ -44,6 +45,17 @@ public class EvaluateCommand extends Command {
             }
         } catch (ScriptException ex) {
             channel.sendMessage(":x: **Failed to evaluate.**\n`" + ex.getMessage() + "`").queue();
+        }
+    }
+
+    private class SQL {
+        public Object evalStatement(String query) {
+            try (Connection connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu", SecretConstants.SQL_USER, SecretConstants.SQL_PASS)) {
+                Statement statement = connection.createStatement();
+                return statement.execute(query);
+            } catch (SQLException ex) {
+                return ex;
+            }
         }
     }
 

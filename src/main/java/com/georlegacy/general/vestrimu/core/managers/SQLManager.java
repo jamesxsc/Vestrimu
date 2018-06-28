@@ -22,11 +22,12 @@ public class SQLManager {
     }
 
     public boolean writeGuild(GuildConfiguration configuration) {
-        String query = "insert into guilds (id, botaccessroleid) values (?, ?)";
+        String query = "insert into guilds (id, botaccessroleid, prefix) values (?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
             preparedStatement.setString(2, configuration.getBotaccessroleid());
+            preparedStatement.setString(3, configuration.getPrefix());
             preparedStatement.execute();
             return true;
         } catch (SQLException e) {
@@ -35,21 +36,47 @@ public class SQLManager {
         }
     }
 
+    public boolean updateGuild(GuildConfiguration configuration) {
+        String query = "select * from guilds";
+        try {
+            resultSet = statement.executeQuery(query);
+            boolean in = false;
+            while (resultSet.next()) {
+                if (resultSet.getString("id").equals(configuration.getId())) {
+                    in = true;
+                    break;
+                }
+            }
+            if (!in)
+                return false;
+            query = "update guilds where id = ? set botaccessroleid = ? set prefix = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, configuration.getId());
+            preparedStatement.setString(2, configuration.getBotaccessroleid());
+            preparedStatement.setString(3, configuration.getPrefix());
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
     public GuildConfiguration readGuild(String guildId) {
         String query = "select * from guilds";
         try {
             resultSet = statement.executeQuery(query);
-            String[] ids = (String[]) resultSet.getArray("id").getArray();
-            int i = 0;
-            for (String id : ids) {
-                if (id.equals(guildId))
+            int i = 1;
+            while (resultSet.next()) {
+                if (resultSet.getString("id").equals(guildId))
                     break;
                 i++;
             }
             resultSet.absolute(i);
             return new GuildConfiguration(
                     guildId,
-                    resultSet.getString("botaccessroleid ")
+                    resultSet.getString("botaccessroleid"),
+                    resultSet.getString("prefix")
             );
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -58,18 +85,13 @@ public class SQLManager {
     }
 
     public boolean containsGuild(String guildId) {
-        String query = "select * from guilds";
+        String query = "select id from guilds";
         try {
             resultSet = statement.executeQuery(query);
-            String[] ids = (String[]) resultSet.getArray("id").getArray();
-            int i = 0;
-            for (String id : ids) {
-                System.out.println(id);
-                if (id.equals(guildId))
+            while (resultSet.next()) {
+                if (resultSet.getString("id").equals(guildId))
                     return true;
-                i++;
             }
-            System.out.println(false);
             return false;
         } catch (SQLException ex) {
             ex.printStackTrace();

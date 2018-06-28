@@ -11,9 +11,13 @@ public class GuildConfiguration {
     @Getter @Setter
     private String botaccessroleid;
 
-    public GuildConfiguration(String id, String botaccessroleid) {
+    @Getter @Setter
+    private String prefix;
+
+    public GuildConfiguration(String id, String botaccessroleid, String prefix) {
         this.id = id;
         this.botaccessroleid = botaccessroleid;
+        this.prefix = prefix;
     }
 
 }
