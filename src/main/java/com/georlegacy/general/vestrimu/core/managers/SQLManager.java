@@ -1,6 +1,7 @@
 package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.SecretConstants;
+import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 
 import java.sql.*;
@@ -22,12 +23,13 @@ public class SQLManager {
     }
 
     public boolean writeGuild(GuildConfiguration configuration) {
-        String query = "insert into guilds (id, botaccessroleid, prefix) values (?, ?, ?)";
+        String query = "insert into guilds (id, botaccessroleid, prefix, requireaccessforhelp) values (?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
             preparedStatement.setString(2, configuration.getBotaccessroleid());
             preparedStatement.setString(3, configuration.getPrefix());
+            preparedStatement.setBoolean(4, configuration.isRequireaccessforhelp());
             preparedStatement.execute();
             return true;
         } catch (SQLException e) {
@@ -49,11 +51,12 @@ public class SQLManager {
             }
             if (!in)
                 return false;
-            query = "update guilds where id = ? set botaccessroleid = ? set prefix = ?";
+            query = "update guilds where id = ? set botaccessroleid = ? set prefix = ? set requireaccessforhelp = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
             preparedStatement.setString(2, configuration.getBotaccessroleid());
             preparedStatement.setString(3, configuration.getPrefix());
+            preparedStatement.setBoolean(4, configuration.isRequireaccessforhelp());
             preparedStatement.executeUpdate();
             return true;
         } catch (SQLException ex) {
@@ -73,11 +76,14 @@ public class SQLManager {
                 i++;
             }
             resultSet.absolute(i);
-            return new GuildConfiguration(
+            GuildConfiguration configuration = new GuildConfiguration(
                     guildId,
                     resultSet.getString("botaccessroleid"),
-                    resultSet.getString("prefix")
+                    resultSet.getString("prefix"),
+                    resultSet.getBoolean("requireaccessforhelp")
             );
+            Vestrimu.getInstance().getGuildConfigs().put(guildId, configuration);
+            return configuration;
         } catch (SQLException ex) {
             ex.printStackTrace();
             return null;

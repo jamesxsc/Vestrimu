@@ -71,7 +71,8 @@ public class JoinNewGuildListener extends ListenerAdapter {
                             Vestrimu.getInstance().getSqlManager().writeGuild(new GuildConfiguration(
                                     guild.getId(),
                                     role.getId(),
-                                    "-"
+                                    "-",
+                                    false
                             ));
 
                         });

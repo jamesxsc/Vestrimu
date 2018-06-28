@@ -1,12 +1,14 @@
 package com.georlegacy.general.vestrimu;
 
 import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
+import com.georlegacy.general.vestrimu.commands.MentionHelpToggleCommand;
 import com.georlegacy.general.vestrimu.commands.WebhookCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -24,15 +26,17 @@ public class Vestrimu {
     @Getter private HashMap<String, GuildConfiguration> guildConfigs;
 
     // Managers
-    @Inject private CommandManager commandManager;
+    @Getter @Inject private CommandManager commandManager;
     @Inject private WebhookManager webhookManager;
     @Getter @Inject private SQLManager sqlManager;
 
     // Listeners
+    @Inject private BotMentionListener botMentionListener;
     @Inject private JoinNewGuildListener joinNewGuildListener;
 
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
+    @Inject private MentionHelpToggleCommand mentionHelpToggleCommand;
     @Inject private WebhookCommand webhookCommand;
 
     @Getter private JDA jda;
@@ -55,6 +59,7 @@ public class Vestrimu {
 
         // Adding commands
         commandManager.addCommand(evaluateCommand);
+        commandManager.addCommand(mentionHelpToggleCommand);
         commandManager.addCommand(webhookCommand);
 
         webhookManager.loadWebhooks();
@@ -66,8 +71,11 @@ public class Vestrimu {
             jda = new JDABuilder(AccountType.BOT)
                     .setToken(SecretConstants.TOKEN)
                     .setGame(Game.watching("615283.net"))
+                    .setAutoReconnect(true)
+                    .setBulkDeleteSplittingEnabled(false)
                     .addEventListener(
                             commandManager,
+                            botMentionListener,
                             joinNewGuildListener
                     )
                     .buildBlocking();

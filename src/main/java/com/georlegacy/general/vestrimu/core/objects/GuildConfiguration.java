@@ -14,10 +14,14 @@ public class GuildConfiguration {
     @Getter @Setter
     private String prefix;
 
-    public GuildConfiguration(String id, String botaccessroleid, String prefix) {
+    @Getter @Setter
+    private boolean requireaccessforhelp;
+
+    public GuildConfiguration(String id, String botaccessroleid, String prefix, boolean requireaccessforhelp) {
         this.id = id;
         this.botaccessroleid = botaccessroleid;
         this.prefix = prefix;
+        this.requireaccessforhelp = requireaccessforhelp;
     }
 
 }
