@@ -1,12 +1,15 @@
 package com.georlegacy.general.vestrimu;
 
 import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
+import com.georlegacy.general.vestrimu.commands.WebhookCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
+import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -20,16 +23,16 @@ public class Vestrimu {
     // Managers
     @Inject private CommandManager commandManager;
     @Inject private WebhookManager webhookManager;
-    @Inject private SQLManager sqlManager;
+    @Getter @Inject private SQLManager sqlManager;
+
+    // Listeners
+    @Inject private JoinNewGuildListener joinNewGuildListener;
 
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
+    @Inject private WebhookCommand webhookCommand;
 
-    private JDA jda;
-
-    public JDA getJDA() {
-        return jda;
-    }
+    @Getter private JDA jda;
 
     private static Vestrimu instance;
 
@@ -47,6 +50,7 @@ public class Vestrimu {
 
         // Adding commands
         commandManager.addCommand(evaluateCommand);
+        commandManager.addCommand(webhookCommand);
 
         webhookManager.loadWebhooks();
     }
@@ -58,7 +62,8 @@ public class Vestrimu {
                     .setToken(SecretConstants.TOKEN)
                     .setGame(Game.watching("615283.net"))
                     .addEventListener(
-                        commandManager
+                            commandManager,
+                            joinNewGuildListener
                     )
                     .buildBlocking();
         } catch (LoginException ex) {

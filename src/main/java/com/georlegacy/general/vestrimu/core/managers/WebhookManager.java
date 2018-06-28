@@ -35,7 +35,7 @@ public class WebhookManager {
     }
 
     public void loadWebhooks() {
-        for (Guild guild : Vestrimu.getInstance().getJDA().getGuilds()) {
+        for (Guild guild : Vestrimu.getInstance().getJda().getGuilds()) {
             List<Webhook> webhooks = getOwnWebhooks(guild);
             if (webhooks.isEmpty()) {
                 addWebhook(guild);
@@ -66,11 +66,9 @@ public class WebhookManager {
         List<Webhook> toReturn = new ArrayList<Webhook>();
         List<Webhook> webhooks = guild.getWebhooks().complete();
         for (Webhook w : webhooks) {
-            if (w.getOwner().getUser().getId().equals(Vestrimu.getInstance().getJDA().getSelfUser().getId())) {
+            if (w.getOwner().getUser().getId().equals(Vestrimu.getInstance().getJda().getSelfUser().getId())) {
                 toReturn.add(w);
-                System.out.println("we are the owner");
             }
-            System.out.println("we dont own it");
         }
         return toReturn;
     }

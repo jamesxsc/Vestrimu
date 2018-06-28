@@ -27,10 +27,12 @@ public class WebhookCommand extends Command {
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst("-" + "webhook", "").trim().split(" ")));
 
         List<TextChannel> mentioned  = message.getMentionedChannels();
+        System.out.println(mentioned);
         if (mentioned.size() == 0) {
-            channel.sendMessage("you actually need a channel tho");
+            channel.sendMessage("you actually need a channel tho").queue();
             return;
         }
+        channel.sendMessage("eh thx 4 teh chanel").queue();
         webhookManager.loadWebhook(event.getGuild());
 
     }

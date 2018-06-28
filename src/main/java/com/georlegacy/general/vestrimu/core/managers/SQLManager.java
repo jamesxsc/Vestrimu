@@ -57,4 +57,24 @@ public class SQLManager {
         }
     }
 
+    public boolean containsGuild(String guildId) {
+        String query = "select * from guilds";
+        try {
+            resultSet = statement.executeQuery(query);
+            String[] ids = (String[]) resultSet.getArray("id").getArray();
+            int i = 0;
+            for (String id : ids) {
+                System.out.println(id);
+                if (id.equals(guildId))
+                    return true;
+                i++;
+            }
+            System.out.println(false);
+            return false;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
 }
