@@ -1,7 +1,8 @@
 package com.georlegacy.general.vestrimu;
 
 import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
-import com.georlegacy.general.vestrimu.commands.MentionHelpToggleCommand;
+import com.georlegacy.general.vestrimu.commands.AccessRequiredForHelpToggleCommand;
+import com.georlegacy.general.vestrimu.commands.StopCommand;
 import com.georlegacy.general.vestrimu.commands.WebhookCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
@@ -16,10 +17,14 @@ import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Vestrimu {
 
@@ -36,7 +41,8 @@ public class Vestrimu {
 
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
-    @Inject private MentionHelpToggleCommand mentionHelpToggleCommand;
+    @Inject private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
+    @Inject private StopCommand stopCommand;
     @Inject private WebhookCommand webhookCommand;
 
     @Getter private JDA jda;
@@ -59,10 +65,18 @@ public class Vestrimu {
 
         // Adding commands
         commandManager.addCommand(evaluateCommand);
-        commandManager.addCommand(mentionHelpToggleCommand);
+        commandManager.addCommand(accessRequiredForHelpToggleCommand);
+        commandManager.addCommand(stopCommand);
         commandManager.addCommand(webhookCommand);
 
         webhookManager.loadWebhooks();
+
+        for (Guild guild : jda.getGuilds()) {
+            Logger.getAnonymousLogger().log(Level.INFO, "Guild loaded with name " + guild.getName());
+            getGuildConfigs().put(guild.getId(), sqlManager.readGuild(guild.getId()));
+        }
+
+        jda.getPresence().setStatus(OnlineStatus.ONLINE);
     }
 
 
@@ -73,6 +87,7 @@ public class Vestrimu {
                     .setGame(Game.watching("615283.net"))
                     .setAutoReconnect(true)
                     .setBulkDeleteSplittingEnabled(false)
+                    .setStatus(OnlineStatus.IDLE)
                     .addEventListener(
                             commandManager,
                             botMentionListener,

@@ -32,7 +32,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                             .setTitle("Sorry!")
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setDescription("I didn't have the required permissions to run correctly in your server. To run me correctly, please click [**here**](https://www.615283.net \"Server invite with permissions\").")
-                            .setFooter("Vestrimu", "https://i.615283.net/u/29e043.png");
+                            .setFooter("Vestrimu", Constants.ICON_URL);
                     guild.getOwner().getUser().openPrivateChannel().queue(dm -> dm.sendMessage(eb.build()).queue());
                     event.getGuild().leave().queue();
                     return;
@@ -43,7 +43,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                     eb
                             .setTitle("Hello")
                             .setColor(Constants.VESTRIMU_PURPLE)
-                            .setFooter("Vestrimu", "https://i.615283.net/u/29e043.png")
+                            .setFooter("Vestrimu", Constants.ICON_URL)
                             .setDescription("I'm **Vestrimu**. *I've been here before.*")
                             .addField("Help", "If you need help getting started, ping me in any channel.", true)
                             .addField("My Creator", "I was built by 615283.", true);
@@ -56,6 +56,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                                         configuration.setBotaccessroleid(role.getId())
                                 );
                     sqlManager.updateGuild(configuration);
+                        Vestrimu.getInstance().getGuildConfigs().put(guild.getId(), configuration);
                     }
                     return;
                 }
@@ -63,7 +64,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                 eb
                         .setTitle("Hello")
                         .setColor(Constants.VESTRIMU_PURPLE)
-                        .setFooter("Vestrimu", "https://i.615283.net/u/29e043.png")
+                        .setFooter("Vestrimu", Constants.ICON_URL)
                         .setDescription("I'm **Vestrimu**, your new server administration bot!")
                         .addField("Help", "If you need help getting started, ping me in any channel.", true)
                         .addField("My Creator", "I was built by 615283.", true);
@@ -72,13 +73,14 @@ public class JoinNewGuildListener extends ListenerAdapter {
                         .setColor(Constants.VESTRIMU_PURPLE)
                         .setName("Vestrimu Access")
                         .queue(role -> {
-                            sqlManager.writeGuild(new GuildConfiguration(
+                            GuildConfiguration configuration = new GuildConfiguration(
                                     guild.getId(),
                                     role.getId(),
                                     "-",
                                     false
-                            ));
-
+                            );
+                            sqlManager.writeGuild(configuration);
+                            Vestrimu.getInstance().getGuildConfigs().put(guild.getId(), configuration);
                         });
 
             }

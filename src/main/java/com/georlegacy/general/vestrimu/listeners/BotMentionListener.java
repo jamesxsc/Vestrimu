@@ -26,7 +26,10 @@ public class BotMentionListener extends ListenerAdapter {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
-        GuildConfiguration configuration = Vestrimu.getInstance().getGuildConfigs().getOrDefault(event.getGuild().getId(), sqlManager.readGuild(event.getGuild().getId()));
+        GuildConfiguration configuration = Vestrimu
+                .getInstance()
+                .getGuildConfigs()
+                .get(message.getGuild().getId());
 
         if (message.getContentRaw().equals(event.getGuild().getMemberById(Constants.VESTRIMU_ID).getAsMention())) {
 
@@ -66,6 +69,8 @@ public class BotMentionListener extends ListenerAdapter {
             // Commands
             EmbedBuilder commands = new EmbedBuilder();
             for (Command command : Vestrimu.getInstance().getCommandManager().getCommands()) {
+                if (command.isAdminOnly() && !(Constants.ADMIN_IDS.contains(message.getAuthor().getId())))
+                    return;
                 commands.addField(
                         configuration.getPrefix() +
                                 command.getName() +
@@ -87,7 +92,7 @@ public class BotMentionListener extends ListenerAdapter {
                             .build()
             );
 
-            helps.forEach(msg -> channel.sendMessage(msg).queue());
+            helps.forEach(msg -> message.getAuthor().openPrivateChannel().queue(dm -> dm.sendMessage(msg).queue()));
 
         }
     }

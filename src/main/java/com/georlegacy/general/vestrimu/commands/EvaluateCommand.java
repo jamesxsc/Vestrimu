@@ -2,6 +2,8 @@ package com.georlegacy.general.vestrimu.commands;
 
 import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.core.Command;
+import com.georlegacy.general.vestrimu.core.managers.SQLManager;
+import com.google.inject.Inject;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -17,16 +19,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class EvaluateCommand extends Command {
+    @Inject private SQLManager sqlManager;
 
     public EvaluateCommand() {
-        super("eval", "Evaluates JDA Code", "<JDA statement>", true);
+        super("eval", "Evaluates Java Statements", "<statement>", true);
     }
 
     @Override
     public void execute(MessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
-        ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst("-" + "eval", "").trim().split(" ")));
+        ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst( sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "eval", "").trim().split(" ")));
 
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("js");
         scriptEngine.put("message", message);
@@ -41,10 +44,10 @@ public class EvaluateCommand extends Command {
             if (output == null) {
                 channel.sendMessage(":white_check_mark: ").queue();
             } else {
-                channel.sendMessage(":white_check_mark:\n `" + output + "`").queue();
+                channel.sendMessage(":white_check_mark:\n ```js\n" + output + "```").queue();
             }
         } catch (ScriptException ex) {
-            channel.sendMessage(":x: **Failed to evaluate.**\n`" + ex.getMessage() + "`").queue();
+            channel.sendMessage(":x: **Failed to evaluate.**```js\n" + ex.getMessage() + "```").queue();
         }
     }
 

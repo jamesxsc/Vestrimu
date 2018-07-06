@@ -15,4 +15,6 @@ public class Constants {
 
     public static final Color VESTRIMU_PURPLE = new Color(108, 24, 162);
 
+    public static final String ICON_URL = "https://i.615283.net/u/29e043.png";
+
 }

@@ -25,7 +25,7 @@ public class SQLManager {
     }
 
     public boolean writeGuild(GuildConfiguration configuration) {
-        String query = "insert into guilds (id, botaccessroleid, prefix, requireaccessforhelp) values (?, ?, ?, ?)";
+        String query = "insert into `guilds` (id, botaccessroleid, prefix, requireaccessforhelp) values (?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
@@ -41,7 +41,7 @@ public class SQLManager {
     }
 
     public boolean updateGuild(GuildConfiguration configuration) {
-        String query = "select * from guilds";
+        String query = "select * from `guilds`";
         try {
             resultSet = statement.executeQuery(query);
             boolean in = false;
@@ -53,13 +53,15 @@ public class SQLManager {
             }
             if (!in)
                 return false;
-            query = "update guilds where id = ? set botaccessroleid = ? set prefix = ? set requireaccessforhelp = ?";
+            query = "update `guilds` set `botaccessroleid` = ?, `prefix` = ?, `requireaccessforhelp` = ? where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, configuration.getId());
-            preparedStatement.setString(2, configuration.getBotaccessroleid());
-            preparedStatement.setString(3, configuration.getPrefix());
-            preparedStatement.setBoolean(4, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(4, configuration.getId());
+
+            preparedStatement.setString(1, configuration.getBotaccessroleid());
+            preparedStatement.setString(2, configuration.getPrefix());
+            preparedStatement.setBoolean(3, configuration.isRequireaccessforhelp());
             preparedStatement.executeUpdate();
+            Vestrimu.getInstance().getGuildConfigs().put(configuration.getId(), configuration);
             return true;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -93,7 +95,7 @@ public class SQLManager {
     }
 
     public boolean containsGuild(String guildId) {
-        String query = "select id from guilds";
+        String query = "select `id` from `guilds`";
         try {
             resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
