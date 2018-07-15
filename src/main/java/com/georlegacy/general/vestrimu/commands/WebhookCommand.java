@@ -17,7 +17,7 @@ public class WebhookCommand extends Command {
     @Inject private WebhookManager webhookManager;
 
     public WebhookCommand() {
-        super("webhook", "Sends webhooks to the server", "<channel> <json>", false);
+        super(new String[]{"wh", "webhook", "sendwebhook"}, "Sends webhooks to the server", "<channel> <json>", false);
     }
 
     @Override

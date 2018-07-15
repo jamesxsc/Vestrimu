@@ -10,9 +10,11 @@ import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
+import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -26,6 +28,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Singleton
 public class Vestrimu {
 
     @Getter private HashMap<String, GuildConfiguration> guildConfigs;
@@ -37,6 +40,7 @@ public class Vestrimu {
 
     // Listeners
     @Inject private BotMentionListener botMentionListener;
+    @Inject private BotModeReactionSelectionListener botModeReactionSelectionListener;
     @Inject private JoinNewGuildListener joinNewGuildListener;
 
     // Commands
@@ -72,7 +76,9 @@ public class Vestrimu {
         webhookManager.loadWebhooks();
 
         for (Guild guild : jda.getGuilds()) {
-            Logger.getAnonymousLogger().log(Level.INFO, "Guild loaded with name " + guild.getName());
+            if (sqlManager.isWaiting(guild))
+                continue;
+            Logger.getGlobal().log(Level.INFO, "Guild loaded with name " + guild.getName());
             getGuildConfigs().put(guild.getId(), sqlManager.readGuild(guild.getId()));
         }
 
@@ -91,6 +97,7 @@ public class Vestrimu {
                     .addEventListener(
                             commandManager,
                             botMentionListener,
+                            botModeReactionSelectionListener,
                             joinNewGuildListener
                     )
                     .buildBlocking();

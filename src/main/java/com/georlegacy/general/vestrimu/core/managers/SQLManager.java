@@ -4,6 +4,7 @@ import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.google.inject.Singleton;
+import net.dv8tion.jda.core.entities.Guild;
 
 import java.sql.*;
 
@@ -21,6 +22,71 @@ public class SQLManager {
             statement = connection.createStatement();
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public boolean setWaiting(Guild guild, String pmId) {
+        String query = "insert into `guilds_in_waiting` (id, is_waiting, pm_id) values (?, true, " + pmId + ")";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, guild.getId());
+            preparedStatement.execute();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Checks the waiting status of a guild through the SQL database
+     * @param guild The guild to check if the bot is waiting to enter
+     * @return The ID of the confirmation private message or null if the guild is not waiting or the SQL database causes an exception to be thrown
+     */
+    public String isWaiting(Guild guild) {
+        String query = "select * from guilds_in_waiting";
+        try {
+            resultSet = statement.executeQuery(query);
+            int i = 1;
+            boolean isIn = false;
+            while (resultSet.next()) {
+                if (resultSet.getString("id").equals(guild.getId())) {
+                    isIn = true;
+                    break;
+                }
+                i++;
+            }
+            if (!isIn)
+                return null;
+            resultSet.absolute(i);
+            return resultSet.getString("pm_id");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean setNotWaiting(Guild guild) {
+        String query = "select * from `guilds_in_waiting`";
+        try {
+            resultSet = statement.executeQuery(query);
+            boolean in = false;
+            while (resultSet.next()) {
+                if (resultSet.getString("id").equals(guild.getId())) {
+                    in = true;
+                    break;
+                }
+            }
+            if (!in)
+                return false;
+            query = "update `guilds_in_waiting` set `is_waiting` = false where `id` = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, guild.getId());
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 

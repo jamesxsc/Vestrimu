@@ -1,24 +1,26 @@
 package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
+import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.google.inject.Singleton;
 import net.dv8tion.jda.core.entities.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Singleton
 public class WebhookManager {
 
-    private Webhook webhook;
+    private HashMap<String, Webhook> webhooks;
 
-    public Webhook getWebhook() {
-        return webhook;
+    public HashMap<String, Webhook> getWebhooks() {
+        return webhooks;
     }
 
     public WebhookManager() {
-
+        this.webhooks = new HashMap<String, Webhook>();
     }
 
     public void loadWebhook(Guild guild) {
@@ -32,11 +34,14 @@ public class WebhookManager {
             addWebhook(guild);
             return;
         }
-        this.webhook = webhooks.get(0);
+        this.webhooks.put(guild.getId(), webhooks.get(0));
+        return;
     }
 
     public void loadWebhooks() {
         for (Guild guild : Vestrimu.getInstance().getJda().getGuilds()) {
+            if (JoinNewGuildListener.getIdsInWaiting().containsKey(guild.getId()))
+                continue;
             List<Webhook> webhooks = getOwnWebhooks(guild);
             if (webhooks.isEmpty()) {
                 addWebhook(guild);
@@ -47,7 +52,7 @@ public class WebhookManager {
                 addWebhook(guild);
                 return;
             }
-            this.webhook = webhooks.get(0);
+            this.webhooks.put(guild.getId(), webhooks.get(0));
         }
     }
 
@@ -65,18 +70,21 @@ public class WebhookManager {
 
     private List<Webhook> getOwnWebhooks(Guild guild) {
         List<Webhook> toReturn = new ArrayList<Webhook>();
-        List<Webhook> webhooks = guild.getWebhooks().complete();
-        for (Webhook w : webhooks) {
-            if (w.getOwner().getUser().getId().equals(Vestrimu.getInstance().getJda().getSelfUser().getId())) {
-                toReturn.add(w);
+        guild.getWebhooks().queue(webhooks -> {
+            for (Webhook w : webhooks) {
+                if (w.getOwner().getUser().getId().equals(Vestrimu.getInstance().getJda().getSelfUser().getId())) {
+                    toReturn.add(w);
+                }
             }
-        }
+        });
         return toReturn;
     }
 
     private void addWebhook(Guild guild) {
         try {
-            this.webhook = guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).complete();
+            guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).queue(hook -> {
+                this.webhooks.put(guild.getId(), hook);
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

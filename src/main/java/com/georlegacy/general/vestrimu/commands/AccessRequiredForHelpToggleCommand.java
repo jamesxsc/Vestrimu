@@ -21,7 +21,7 @@ public class AccessRequiredForHelpToggleCommand extends Command {
     private SQLManager sqlManager;
 
     public AccessRequiredForHelpToggleCommand() {
-        super("restricthelp", "Toggles if a user must have the bot access role to view help.", "[enable|disable]", false);
+        super(new String[]{"rafh", "requireaccessforhelp", "helpneedaccess", "accesshelp"}, "Toggles if a user must have the bot access role to view help.", "[enable|disable]", false);
     }
 
     @Override

@@ -4,13 +4,16 @@ import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.google.inject.Inject;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,17 +24,31 @@ import java.util.Arrays;
 public class EvaluateCommand extends Command {
     @Inject private SQLManager sqlManager;
 
+    private ScriptEngine scriptEngine;
+
     public EvaluateCommand() {
-        super("eval", "Evaluates Java Statements", "<statement>", true);
+        super(new String[]{"eval", "evaluate", "evalstatement", "runstatement"}, "Evaluates Java Statements", "<statement>", true);
+        scriptEngine = new ScriptEngineManager().getEngineByName("js");
+        try {
+            scriptEngine.eval("var _imports = new JavaImporter(" +
+                    "java.lang," +
+                    "java.util," +
+                    "java.awt," +
+                    "Packages.net.dv8tion.jda.core" +
+            ");");
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void execute(MessageReceivedEvent event) {
+        long currentTime = System.currentTimeMillis();
+
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst( sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "eval", "").trim().split(" ")));
 
-        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("js");
         scriptEngine.put("message", message);
         scriptEngine.put("jda", event.getJDA());
         scriptEngine.put("guild", event.getGuild());
@@ -40,15 +57,42 @@ public class EvaluateCommand extends Command {
         scriptEngine.put("sql", new SQL());
 
         try {
-            Object output = scriptEngine.eval(String.join(" ", args));
+            Object output = scriptEngine.eval("with (_imports) {" + String.join(" ", args) + "}");
             if (output == null) {
-                channel.sendMessage(":white_check_mark: ").queue();
+                channel.sendMessage(success(System.currentTimeMillis() - currentTime)).queue();
             } else {
-                channel.sendMessage(":white_check_mark:\n ```js\n" + output + "```").queue();
+                channel.sendMessage(details(output, System.currentTimeMillis() - currentTime)).queue();
             }
         } catch (ScriptException ex) {
-            channel.sendMessage(":x: **Failed to evaluate.**```js\n" + ex.getMessage() + "```").queue();
+            channel.sendMessage(error(ex.getMessage(), System.currentTimeMillis() - currentTime)).queue();
         }
+    }
+
+    private MessageEmbed success(long time) {
+        return new EmbedBuilder()
+                .setColor(Color.GREEN)
+                .setTitle("__**Success**__")
+                .setDescription(":white_check_mark:")
+                .addField("Time Taken", time + "ms", false)
+                .build();
+    }
+
+    private MessageEmbed details(Object details, long time) {
+        return new EmbedBuilder()
+                .setColor(Color.GREEN)
+                .setTitle("__**Success:**__")
+                .setDescription("```js\n" + details + "```")
+                .addField("Time Taken", time + "ms", false)
+                .build();
+    }
+
+    private MessageEmbed error(String error, long time) {
+        return new EmbedBuilder()
+                .setColor(Color.RED)
+                .setTitle("__**Failed to Evaluate:**__")
+                .setDescription("```js\n" + error + "```")
+                .addField("Time Taken", time + "ms", false)
+                .build();
     }
 
     private class SQL {

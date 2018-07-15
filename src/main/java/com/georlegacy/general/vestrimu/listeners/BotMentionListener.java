@@ -7,10 +7,7 @@ import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -25,6 +22,15 @@ public class BotMentionListener extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
+
+        if (message.getAuthor().isBot())
+            return;
+
+        if (channel.getType().equals(ChannelType.PRIVATE))
+            return;
+
+        if (message.getAuthor().getId().equals(Constants.VESTRIMU_ID))
+            return;
 
         GuildConfiguration configuration = Vestrimu
                 .getInstance()
@@ -73,12 +79,12 @@ public class BotMentionListener extends ListenerAdapter {
                     return;
                 commands.addField(
                         configuration.getPrefix() +
-                                command.getName() +
+                                String.join("|", command.getNames()) +
                                 (command.isAdminOnly() ? " **[BOT ADMIN ONLY]**" : ""),
                         command.getDescription() +
                                 "\n`" +
                                 configuration.getPrefix() +
-                                command.getName() +
+                                String.join("|", command.getNames()) +
                                 " " +
                                 command.getHelp() + "`",
                         false

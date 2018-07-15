@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class StopCommand extends Command {
 
     public StopCommand() {
-        super("stop", "Stops the bot.", "", true);
+        super(new String[]{"abort", "stop", "haltall", "emergencystop", "orderhalt"}, "Stops the bot.", "", true);
     }
 
     @Override

@@ -4,7 +4,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public abstract class Command {
 
-    private final String name;
+    private final String[] names;
     private final String description;
     private final String help;
     private final boolean adminOnly;
@@ -13,8 +13,8 @@ public abstract class Command {
         this(null, null, null, false);
     }
 
-    protected Command(String name, String description, String help, boolean adminOnly) {
-        this.name = name;
+    protected Command(String[] names, String description, String help, boolean adminOnly) {
+        this.names = names;
         this.description = description;
         this.help = help;
         this.adminOnly = adminOnly;
@@ -26,8 +26,8 @@ public abstract class Command {
         execute(event);
     }
 
-    public String getName() {
-        return name;
+    public String[] getNames() {
+        return names;
     }
 
     public String getDescription() {
