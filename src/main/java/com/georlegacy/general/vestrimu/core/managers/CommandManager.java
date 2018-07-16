@@ -2,10 +2,12 @@ package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
+import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -37,6 +39,7 @@ public class CommandManager extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
+        Guild guild = event.getGuild();
 
         if (message.getAuthor().isBot())
             return;
@@ -47,20 +50,28 @@ public class CommandManager extends ListenerAdapter {
         if (message.getAuthor().getId().equals(Constants.VESTRIMU_ID))
             return;
 
-        if (sqlManager.isWaiting(event.getGuild()))
+        if (sqlManager.isWaiting(event.getGuild()) != null)
             return;
 
         if (event.getAuthor().isBot()) return;
         for (Command command : commands) {
             String[] cmdnames = command.getNames();
             for (String cmdname : cmdnames) {
-                if (message.getContentRaw().startsWith(Vestrimu.getInstance().getGuildConfigs().getOrDefault(event.getGuild().getId(), sqlManager.readGuild(event.getGuild().getId())).getPrefix() + cmdname)) {
-                    if (command.isAdminOnly()) {
+                if (message.getContentRaw().startsWith(sqlManager.readGuild(event.getGuild().getId()).getPrefix() + cmdname)) {
+                    if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN)) {
                         if (Constants.ADMIN_IDS.contains(event.getAuthor().getId())) {
                             command.run(event);
                             return;
                         } else {
-                            channel.sendMessage("no perms lol").queue();
+                            channel.sendMessage("no perms lol, only super admins").queue();
+                            return;
+                        }
+                    } else if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN)) {
+                        if (event.getMember().getRoles().contains(guild.getRoleById(sqlManager.readGuild(guild.getId()).getBotaccessroleid()))) {
+                            command.run(event);
+                            return;
+                        } else {
+                            channel.sendMessage("no perms xd, only server admins").queue();
                             return;
                         }
                     }

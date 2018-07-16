@@ -31,8 +31,6 @@ import java.util.logging.Logger;
 @Singleton
 public class Vestrimu {
 
-    @Getter private HashMap<String, GuildConfiguration> guildConfigs;
-
     // Managers
     @Getter @Inject private CommandManager commandManager;
     @Inject private WebhookManager webhookManager;
@@ -59,7 +57,6 @@ public class Vestrimu {
 
     public Vestrimu() {
         instance = this;
-        guildConfigs = new HashMap<String, GuildConfiguration>();
 
         BinderModule module = new BinderModule(this.getClass());
         Injector injector = module.createInjector();
@@ -76,10 +73,9 @@ public class Vestrimu {
         webhookManager.loadWebhooks();
 
         for (Guild guild : jda.getGuilds()) {
-            if (sqlManager.isWaiting(guild))
+            if (sqlManager.isWaiting(guild) != null)
                 continue;
             Logger.getGlobal().log(Level.INFO, "Guild loaded with name " + guild.getName());
-            getGuildConfigs().put(guild.getId(), sqlManager.readGuild(guild.getId()));
         }
 
         jda.getPresence().setStatus(OnlineStatus.ONLINE);

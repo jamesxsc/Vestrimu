@@ -1,7 +1,7 @@
 package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
-import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.dv8tion.jda.core.entities.*;
 
@@ -13,17 +13,13 @@ import java.util.List;
 @Singleton
 public class WebhookManager {
 
-    private HashMap<String, Webhook> webhooks;
-
-    public HashMap<String, Webhook> getWebhooks() {
-        return webhooks;
-    }
-
-    public WebhookManager() {
-        this.webhooks = new HashMap<String, Webhook>();
-    }
+    @Inject private SQLManager sqlManager;
 
     public void loadWebhook(Guild guild) {
+        if (sqlManager.isWaiting(guild) != null)
+            return;
+        if (!sqlManager.readGuild(guild.getId()).isAdmin_mode())
+            return;
         List<Webhook> webhooks = getOwnWebhooks(guild);
         if (webhooks.isEmpty()) {
             addWebhook(guild);
@@ -34,25 +30,11 @@ public class WebhookManager {
             addWebhook(guild);
             return;
         }
-        this.webhooks.put(guild.getId(), webhooks.get(0));
-        return;
     }
 
     public void loadWebhooks() {
         for (Guild guild : Vestrimu.getInstance().getJda().getGuilds()) {
-            if (JoinNewGuildListener.getIdsInWaiting().containsKey(guild.getId()))
-                continue;
-            List<Webhook> webhooks = getOwnWebhooks(guild);
-            if (webhooks.isEmpty()) {
-                addWebhook(guild);
-                return;
-            }
-            if (webhooks.size() > 1) {
-                deleteWebhooks(webhooks);
-                addWebhook(guild);
-                return;
-            }
-            this.webhooks.put(guild.getId(), webhooks.get(0));
+            loadWebhook(guild);
         }
     }
 
@@ -83,7 +65,7 @@ public class WebhookManager {
     private void addWebhook(Guild guild) {
         try {
             guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).queue(hook -> {
-                this.webhooks.put(guild.getId(), hook);
+                sqlManager.updateGuild(sqlManager.readGuild(guild.getId()).setPrimarywebhookid(hook.getId()));
             });
         } catch (IOException e) {
             e.printStackTrace();

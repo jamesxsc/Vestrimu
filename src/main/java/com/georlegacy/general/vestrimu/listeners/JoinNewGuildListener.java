@@ -12,10 +12,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,16 +20,6 @@ public class JoinNewGuildListener extends ListenerAdapter {
 
     @Inject private SQLManager sqlManager;
     @Inject private WebhookManager webhookManager;
-
-    private static Map<String /* Guild ID */, String /* Message ID */> idsInWaiting;
-
-    public static Map<String, String> getIdsInWaiting() {
-        return idsInWaiting;
-    }
-
-    public JoinNewGuildListener() {
-        idsInWaiting = new HashMap<String, String>();
-    }
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -54,9 +40,8 @@ public class JoinNewGuildListener extends ListenerAdapter {
                     guild.getOwner().getUser().openPrivateChannel().queue(dm -> dm.sendMessage(eb.build()).queue(message -> {
                         message.addReaction("\u0031\u20E3").queue();
                         message.addReaction("\u0032\u20E3").queue();
-                        idsInWaiting.put(guild.getId(), message.getId());
+                        sqlManager.setWaiting(guild, message.getId());
                     }));
-                    sqlManager.setWaiting(guild);
                     return;
                 }
                 if (sqlManager.containsGuild(guild.getId())) {
@@ -79,11 +64,9 @@ public class JoinNewGuildListener extends ListenerAdapter {
                                         configuration.setBotaccessroleid(role.getId())
                                 );
                     sqlManager.updateGuild(configuration);
-                        Vestrimu.getInstance().getGuildConfigs().put(guild.getId(), configuration);
                     }
                     return;
                 }
-                webhookManager.loadWebhook(guild);
                 EmbedBuilder eb = new EmbedBuilder();
                 eb
                         .setTitle("Hello")
@@ -100,12 +83,14 @@ public class JoinNewGuildListener extends ListenerAdapter {
                             GuildConfiguration configuration = new GuildConfiguration(
                                     guild.getId(),
                                     role.getId(),
+                                    "TBC",
                                     "-",
+                                    true,
                                     false
                             );
                             sqlManager.writeGuild(configuration);
-                            Vestrimu.getInstance().getGuildConfigs().put(guild.getId(), configuration);
                         });
+                webhookManager.loadWebhook(guild);
 
             }
         }, 3, TimeUnit.SECONDS);

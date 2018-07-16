@@ -1,27 +1,25 @@
 package com.georlegacy.general.vestrimu.listeners;
 
+import com.georlegacy.general.vestrimu.core.managers.SQLManager;
+import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
+import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.priv.react.PrivateMessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-import java.util.Map;
 
 public class BotModeReactionSelectionListener extends ListenerAdapter {
 
+    @Inject private SQLManager sqlManager;
+
     @Override
     public void onPrivateMessageReactionAdd(PrivateMessageReactionAddEvent event) {
-        boolean contained = false;
-        String guildId = "";
-        for (Map.Entry<String, String> entry : JoinNewGuildListener.getIdsInWaiting().entrySet()) {
-            if (entry.getValue().equals(event.getMessageId())) {
-                guildId = entry.getKey();
-                contained = true;
-            }
-        }
-        if (!contained) return;
-        if (event.getUser().getId().equals(Constants.VESTRIMU_ID)) return;
-
+        String guildId = sqlManager.isWaiting(event.getMessageId());
+        if (guildId == null)
+            return;
+        if (event.getUser().getId().equals(Constants.VESTRIMU_ID))
+            return;
         if (event.getReactionEmote().getName().equals("\u0031\u20E3")) {
             event.getChannel().sendMessage(new EmbedBuilder()
                     .setTitle("Success")
@@ -30,6 +28,7 @@ public class BotModeReactionSelectionListener extends ListenerAdapter {
                     .setFooter("Vestrimu", Constants.ICON_URL)
                     .build()
             ).queue();
+            sqlManager.setNotWaiting(event.getJDA().getGuildById(guildId));
             event.getJDA().getGuildById(guildId).leave().queue();
             return;
         }
@@ -42,7 +41,15 @@ public class BotModeReactionSelectionListener extends ListenerAdapter {
                     .setFooter("Vestrimu", Constants.ICON_URL)
                     .build()
             ).queue();
-            return;
+            sqlManager.setNotWaiting(event.getJDA().getGuildById(guildId));
+            sqlManager.writeGuild(new GuildConfiguration(
+                    guildId,
+                    "N/A",
+                    "N/A",
+                    "-",
+                    false,
+                    false
+            ));
         }
     }
 }

@@ -31,7 +31,7 @@ public class AccessRequiredForHelpToggleCommand extends Command {
         List<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst(sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "pinghelp", "").trim().split(" ")));
 
 
-        GuildConfiguration configuration = Vestrimu.getInstance().getGuildConfigs().getOrDefault(event.getGuild().getId(), sqlManager.readGuild(event.getGuild().getId()));
+        GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
 
         if (args.size() == 1) {
             if (args.get(0).equalsIgnoreCase("enable") ||

@@ -32,10 +32,7 @@ public class BotMentionListener extends ListenerAdapter {
         if (message.getAuthor().getId().equals(Constants.VESTRIMU_ID))
             return;
 
-        GuildConfiguration configuration = Vestrimu
-                .getInstance()
-                .getGuildConfigs()
-                .get(message.getGuild().getId());
+        GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
 
         if (message.getContentRaw().equals(event.getGuild().getMemberById(Constants.VESTRIMU_ID).getAsMention())) {
 

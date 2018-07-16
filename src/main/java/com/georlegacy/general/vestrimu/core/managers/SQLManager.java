@@ -66,6 +66,34 @@ public class SQLManager {
         }
     }
 
+    /**
+     * Checks the waiting status of a guild through the SQL database
+     * @param pmId The ID of the private message to find the guild with
+     * @return The ID of the found guild or null ifthat private message is not from a waiting guild owner or the SQL database causes an exception to be thrown
+     */
+    public String isWaiting(String pmId) {
+        String query = "select * from guilds_in_waiting";
+        try {
+            resultSet = statement.executeQuery(query);
+            int i = 1;
+            boolean isIn = false;
+            while (resultSet.next()) {
+                if (resultSet.getString("pm_id").equals(pmId)) {
+                    isIn = true;
+                    break;
+                }
+                i++;
+            }
+            if (!isIn)
+                return null;
+            resultSet.absolute(i);
+            return resultSet.getString("id");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public boolean setNotWaiting(Guild guild) {
         String query = "select * from `guilds_in_waiting`";
         try {
@@ -79,10 +107,10 @@ public class SQLManager {
             }
             if (!in)
                 return false;
-            query = "update `guilds_in_waiting` set `is_waiting` = false where `id` = ?";
+            query = "delete from guilds_in_waiting where `id` = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, guild.getId());
-            preparedStatement.executeUpdate();
+            preparedStatement.execute();
             return true;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -91,13 +119,15 @@ public class SQLManager {
     }
 
     public boolean writeGuild(GuildConfiguration configuration) {
-        String query = "insert into `guilds` (id, botaccessroleid, prefix, requireaccessforhelp) values (?, ?, ?, ?)";
+        String query = "insert into `guilds` (id, botaccessroleid, primarywebhookid, prefix, admin_mode, requireaccessforhelp) values (?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
             preparedStatement.setString(2, configuration.getBotaccessroleid());
-            preparedStatement.setString(3, configuration.getPrefix());
-            preparedStatement.setBoolean(4, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(3, configuration.getPrimarywebhookid());
+            preparedStatement.setString(4, configuration.getPrefix());
+            preparedStatement.setBoolean(5, configuration.isAdmin_mode());
+            preparedStatement.setBoolean(6, configuration.isRequireaccessforhelp());
             preparedStatement.execute();
             return true;
         } catch (SQLException e) {
@@ -119,15 +149,16 @@ public class SQLManager {
             }
             if (!in)
                 return false;
-            query = "update `guilds` set `botaccessroleid` = ?, `prefix` = ?, `requireaccessforhelp` = ? where id = ?";
+            query = "update `guilds` set `botaccessroleid` = ?, `primarywebhookid` = ?, `admin_mode` = ?, `prefix` = ?, `requireaccessforhelp` = ? where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(4, configuration.getId());
+            preparedStatement.setString(6, configuration.getId());
 
             preparedStatement.setString(1, configuration.getBotaccessroleid());
-            preparedStatement.setString(2, configuration.getPrefix());
-            preparedStatement.setBoolean(3, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(2, configuration.getPrimarywebhookid());
+            preparedStatement.setBoolean(3, configuration.isAdmin_mode());
+            preparedStatement.setString(4, configuration.getPrefix());
+            preparedStatement.setBoolean(5, configuration.isRequireaccessforhelp());
             preparedStatement.executeUpdate();
-            Vestrimu.getInstance().getGuildConfigs().put(configuration.getId(), configuration);
             return true;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -136,6 +167,9 @@ public class SQLManager {
     }
 
     public GuildConfiguration readGuild(String guildId) {
+        if (!containsGuild(guildId))
+            return null;
+
         String query = "select * from guilds";
         try {
             resultSet = statement.executeQuery(query);
@@ -149,10 +183,11 @@ public class SQLManager {
             GuildConfiguration configuration = new GuildConfiguration(
                     guildId,
                     resultSet.getString("botaccessroleid"),
+                    resultSet.getString("primarywebhookid"),
                     resultSet.getString("prefix"),
+                    resultSet.getBoolean("admin_mode"),
                     resultSet.getBoolean("requireaccessforhelp")
             );
-            Vestrimu.getInstance().getGuildConfigs().put(guildId, configuration);
             return configuration;
         } catch (SQLException ex) {
             ex.printStackTrace();
