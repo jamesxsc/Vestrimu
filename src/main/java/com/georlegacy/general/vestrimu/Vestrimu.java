@@ -1,9 +1,6 @@
 package com.georlegacy.general.vestrimu;
 
-import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
-import com.georlegacy.general.vestrimu.commands.AccessRequiredForHelpToggleCommand;
-import com.georlegacy.general.vestrimu.commands.StopCommand;
-import com.georlegacy.general.vestrimu.commands.WebhookCommand;
+import com.georlegacy.general.vestrimu.commands.*;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
@@ -24,7 +21,6 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 
 import javax.security.auth.login.LoginException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,11 +39,19 @@ public class Vestrimu {
 
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
-    @Inject private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
     @Inject private StopCommand stopCommand;
+
+    @Inject private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
+    @Inject private RestoreCommand restoreCommand;
+    @Inject private SetPrefixCommand setPrefixCommand;
     @Inject private WebhookCommand webhookCommand;
 
+    @Inject private StatsCommand statsCommand;
+    @Inject private TranslateCommand translateCommand;
+
     @Getter private JDA jda;
+
+    @Getter private final long startupTime;
 
     private static Vestrimu instance;
 
@@ -56,6 +60,8 @@ public class Vestrimu {
     }
 
     public Vestrimu() {
+        startupTime = System.currentTimeMillis();
+
         instance = this;
 
         BinderModule module = new BinderModule(this.getClass());
@@ -64,11 +70,19 @@ public class Vestrimu {
 
         startBot();
 
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+
         // Adding commands
         commandManager.addCommand(evaluateCommand);
-        commandManager.addCommand(accessRequiredForHelpToggleCommand);
         commandManager.addCommand(stopCommand);
+
+        commandManager.addCommand(accessRequiredForHelpToggleCommand);
+        commandManager.addCommand(restoreCommand);
+        commandManager.addCommand(setPrefixCommand);
         commandManager.addCommand(webhookCommand);
+
+        commandManager.addCommand(statsCommand);
+        commandManager.addCommand(translateCommand);
 
         webhookManager.loadWebhooks();
 
@@ -81,6 +95,17 @@ public class Vestrimu {
         jda.getPresence().setStatus(OnlineStatus.ONLINE);
     }
 
+    private void shutdown() {
+        System.out.println("Preparing to shut down");
+        jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+        try {
+            Thread.sleep(10000);
+            System.out.println("Shutting down Vestrimu");
+            jda.shutdownNow();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void startBot() {
         try {

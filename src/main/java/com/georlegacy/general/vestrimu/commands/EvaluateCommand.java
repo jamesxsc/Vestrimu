@@ -3,6 +3,7 @@ package com.georlegacy.general.vestrimu.commands;
 import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
+import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
@@ -27,7 +28,7 @@ public class EvaluateCommand extends Command {
     private ScriptEngine scriptEngine;
 
     public EvaluateCommand() {
-        super(new String[]{"eval", "evaluate", "evalstatement", "runstatement"}, "Evaluates Java Statements", "<statement>", true);
+        super(new String[]{"eval", "evaluate", "evalstatement", "runstatement"}, "Evaluates statements.", "<statement>", CommandAccessType.SUPER_ADMIN, false);
         scriptEngine = new ScriptEngineManager().getEngineByName("js");
         try {
             scriptEngine.eval("var _imports = new JavaImporter(" +
@@ -47,7 +48,8 @@ public class EvaluateCommand extends Command {
 
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
-        ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst( sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "eval", "").trim().split(" ")));
+        ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
+        args.remove(0);
 
         scriptEngine.put("message", message);
         scriptEngine.put("jda", event.getJDA());

@@ -3,6 +3,7 @@ package com.georlegacy.general.vestrimu.commands;
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
+import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -17,14 +18,15 @@ public class WebhookCommand extends Command {
     @Inject private WebhookManager webhookManager;
 
     public WebhookCommand() {
-        super(new String[]{"wh", "webhook", "sendwebhook"}, "Sends webhooks to the server", "<channel> <json>", false);
+        super(new String[]{"wh", "webhook", "sendwebhook"}, "Sends webhooks to the server.", "<channel>", CommandAccessType.SERVER_ADMIN, true);
     }
 
     @Override
     public void execute(MessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
-        ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst("-" + "webhook", "").trim().split(" ")));
+        ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
+        args.remove(0);
 
         List<TextChannel> mentioned  = message.getMentionedChannels();
         System.out.println(mentioned);

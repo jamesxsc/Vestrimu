@@ -2,18 +2,16 @@ package com.georlegacy.general.vestrimu.commands;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
+import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class StopCommand extends Command {
 
     public StopCommand() {
-        super(new String[]{"abort", "stop", "haltall", "emergencystop", "orderhalt"}, "Stops the bot.", "", true);
+        super(new String[]{"abort", "stop", "haltall", "emergencystop", "orderhalt"}, "Stops the bot.", "", CommandAccessType.SUPER_ADMIN, false);
     }
 
     @Override
@@ -25,13 +23,7 @@ public class StopCommand extends Command {
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setFooter("Vestrimu", Constants.ICON_URL);
         event.getChannel().sendMessage(eb.build()).queue();
-        Vestrimu.getInstance().getJda().getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Vestrimu.getInstance().getJda().shutdownNow();
+        System.exit(0);
     }
 
 }

@@ -4,11 +4,13 @@ import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
@@ -16,17 +18,15 @@ import java.util.List;
 
 public class BotMentionListener extends ListenerAdapter {
 
-    @Inject private SQLManager sqlManager;
+    @Inject
+    private SQLManager sqlManager;
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
 
         if (message.getAuthor().isBot())
-            return;
-
-        if (channel.getType().equals(ChannelType.PRIVATE))
             return;
 
         if (message.getAuthor().getId().equals(Constants.VESTRIMU_ID))
@@ -55,33 +55,45 @@ public class BotMentionListener extends ListenerAdapter {
                     new EmbedBuilder()
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setTitle("Prefix")
-                            .setDescription("All commands are started with a prefix, this server's prefix is currently `" + configuration.getPrefix() + "`.")
+                            .setDescription("All commands begin with a prefix, **" + event.getGuild().getName() + "**'s prefix is currently `" + configuration.getPrefix() + "`.")
                             .build()
             );
 
-            // Access role
-            helps.add(
-                    new EmbedBuilder()
-                            .setColor(Constants.VESTRIMU_PURPLE)
-                            .setTitle("Access Role")
-                            .setDescription("The current role is `@" + event.getGuild().getRoleById(configuration.getBotaccessroleid()).getName() + "`.\n" +
-                                    "Assign this role to anyone you wish to have access to the bot's commands. It is configurable whether the bot will respond at all to a user without the role.")
-                            .build()
-            );
+            if (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode()) {
+                // Access role
+                helps.add(
+                        new EmbedBuilder()
+                                .setColor(Constants.VESTRIMU_PURPLE)
+                                .setTitle("Access Role")
+                                .setDescription("The current role in ** " + event.getGuild().getName() + "** is `@" + event.getGuild().getRoleById(configuration.getBotaccessroleid()).getName() + "`.\n" +
+                                        "This role can be assigned to anyone, giving them access to server administration commands.")
+                                .build()
+                );
+            } else {
+                helps.add(
+                        new EmbedBuilder()
+                                .setColor(Constants.VESTRIMU_PURPLE)
+                                .setTitle("Access Role")
+                                .setDescription("This server is not in admin mode so only the server owner can perform restricted commands")
+                                .build()
+                );
+            }
 
             // Commands
             EmbedBuilder commands = new EmbedBuilder();
             for (Command command : Vestrimu.getInstance().getCommandManager().getCommands()) {
-                if (command.isAdminOnly() && !(Constants.ADMIN_IDS.contains(message.getAuthor().getId())))
-                    return;
+                if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) && !(Constants.ADMIN_IDS.contains(message.getAuthor().getId())))
+                    continue;
+                if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) && (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() ? !(event.getMember().getRoles().contains(event.getGuild().getRoleById(sqlManager.readGuild(event.getGuild().getId()).getBotaccessroleid()))) : !(event.getMember().isOwner())))
+                    continue;
                 commands.addField(
-                        configuration.getPrefix() +
-                                String.join("|", command.getNames()) +
-                                (command.isAdminOnly() ? " **[BOT ADMIN ONLY]**" : ""),
+                        (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " : command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " : ":eight_pointed_black_star: ") +
+                                configuration.getPrefix() +
+                                String.join("|", command.getNames()),
                         command.getDescription() +
                                 "\n`" +
                                 configuration.getPrefix() +
-                                String.join("|", command.getNames()) +
+                                command.getNames()[0] +
                                 " " +
                                 command.getHelp() + "`",
                         false
@@ -91,7 +103,7 @@ public class BotMentionListener extends ListenerAdapter {
                     commands
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setTitle("Commands")
-                            .setDescription("Below are all of the bot's commands.")
+                            .setDescription("Below are all of your available commands")
                             .build()
             );
 

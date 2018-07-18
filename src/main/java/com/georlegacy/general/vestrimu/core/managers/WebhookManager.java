@@ -6,9 +6,7 @@ import com.google.inject.Singleton;
 import net.dv8tion.jda.core.entities.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class WebhookManager {
@@ -20,16 +18,17 @@ public class WebhookManager {
             return;
         if (!sqlManager.readGuild(guild.getId()).isAdmin_mode())
             return;
-        List<Webhook> webhooks = getOwnWebhooks(guild);
-        if (webhooks.isEmpty()) {
-            addWebhook(guild);
-            return;
-        }
-        if (webhooks.size() > 1) {
-            deleteWebhooks(webhooks);
-            addWebhook(guild);
-            return;
-        }
+
+        guild.getWebhooks().queue(webhooks -> {
+            boolean b = true;
+            for (Webhook w : webhooks) {
+                if (w.getId().equals(sqlManager.readGuild(guild.getId()).getPrimarywebhookid())) {
+                    b = false;
+                }
+            }
+            if (b)
+                addWebhook(guild);
+        });
     }
 
     public void loadWebhooks() {
@@ -50,31 +49,13 @@ public class WebhookManager {
 
     }
 
-    private List<Webhook> getOwnWebhooks(Guild guild) {
-        List<Webhook> toReturn = new ArrayList<Webhook>();
-        guild.getWebhooks().queue(webhooks -> {
-            for (Webhook w : webhooks) {
-                if (w.getOwner().getUser().getId().equals(Vestrimu.getInstance().getJda().getSelfUser().getId())) {
-                    toReturn.add(w);
-                }
-            }
-        });
-        return toReturn;
-    }
-
     private void addWebhook(Guild guild) {
         try {
-            guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).queue(hook -> {
+            guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).queueAfter(1, TimeUnit.SECONDS, hook -> {
                 sqlManager.updateGuild(sqlManager.readGuild(guild.getId()).setPrimarywebhookid(hook.getId()));
             });
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void deleteWebhooks(List<Webhook> webhooks) {
-        for (Webhook w : webhooks) {
-            w.delete().queue();
         }
     }
 

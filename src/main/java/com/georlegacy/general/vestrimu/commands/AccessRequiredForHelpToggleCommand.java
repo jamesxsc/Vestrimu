@@ -4,6 +4,7 @@ import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -21,7 +22,7 @@ public class AccessRequiredForHelpToggleCommand extends Command {
     private SQLManager sqlManager;
 
     public AccessRequiredForHelpToggleCommand() {
-        super(new String[]{"rafh", "requireaccessforhelp", "helpneedaccess", "accesshelp"}, "Toggles if a user must have the bot access role to view help.", "[enable|disable]", false);
+        super(new String[]{"rafh", "requireaccessforhelp", "helpneedaccess", "accesshelp"}, "Toggles if a user must have the bot access role to view help.", "[enable|disable]", CommandAccessType.SERVER_ADMIN, false);
     }
 
     @Override
@@ -29,7 +30,6 @@ public class AccessRequiredForHelpToggleCommand extends Command {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         List<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst(sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "pinghelp", "").trim().split(" ")));
-
 
         GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
 

@@ -63,6 +63,10 @@
             <name>jcenter-bintray</name>
             <url>http://jcenter.bintray.com</url>
         </repository>
+        <repository>
+            <id>615283-repo</id>
+            <url>http://repo.615283.net:8443/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -92,8 +96,12 @@
             <artifactId>lombok</artifactId>
             <version>1.18.0</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.rmtheis.yandtran</groupId>
+            <artifactId>yandex-translator-java-api</artifactId>
+            <version>1.1</version>
+            <classifier>shaded</classifier>
+        </dependency>
     </dependencies>
 
 </project>

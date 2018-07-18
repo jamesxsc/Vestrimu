@@ -9,16 +9,18 @@ public abstract class Command {
     private final String description;
     private final String help;
     private final CommandAccessType accessType;
+    private boolean onlyAdminModeServers;
 
     protected Command() {
-        this(null, null, null, CommandAccessType.USER_ANY);
+        this(null, null, null, CommandAccessType.USER_ANY, false);
     }
 
-    protected Command(String[] names, String description, String help, CommandAccessType accessType) {
+    protected Command(String[] names, String description, String help, CommandAccessType accessType, boolean onlyAdminModeServers) {
         this.names = names;
         this.description = description;
         this.help = help;
         this.accessType = accessType;
+        this.onlyAdminModeServers = onlyAdminModeServers;
     }
 
     public abstract void execute(MessageReceivedEvent event);
@@ -43,4 +45,7 @@ public abstract class Command {
         return accessType;
     }
 
+    public boolean isOnlyAdminModeServers() {
+        return onlyAdminModeServers;
+    }
 }
