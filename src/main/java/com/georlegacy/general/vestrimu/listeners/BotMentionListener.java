@@ -64,17 +64,23 @@ public class BotMentionListener extends ListenerAdapter {
                 helps.add(
                         new EmbedBuilder()
                                 .setColor(Constants.VESTRIMU_PURPLE)
-                                .setTitle("Access Role")
-                                .setDescription("The current role in ** " + event.getGuild().getName() + "** is `@" + event.getGuild().getRoleById(configuration.getBotaccessroleid()).getName() + "`.\n" +
-                                        "This role can be assigned to anyone, giving them access to server administration commands.")
+                                .setTitle("Permissions")
+                                .setDescription("The current access role in ** " + event.getGuild().getName() + "** is `@" + event.getGuild().getRoleById(configuration.getBotaccessroleid()).getName() + "`.\n" +
+                                        "This role can be assigned to anyone, giving them access to server administration commands.\n" +
+                                        ":no_entry: - Commands only for super admins\n" +
+                                        ":warning: - Commands only for server admins\n" +
+                                        ":eight_pointed_black_star: - Commands for any user")
                                 .build()
                 );
             } else {
                 helps.add(
                         new EmbedBuilder()
                                 .setColor(Constants.VESTRIMU_PURPLE)
-                                .setTitle("Access Role")
-                                .setDescription("This server is not in admin mode so only the server owner can perform restricted commands")
+                                .setTitle("Permissions")
+                                .setDescription("This server is not in admin mode so only the server owner can perform restricted commands.\n \n" +
+                                        ":no_entry: - Commands only for super admins\n" +
+                                        ":warning: - Commands only for server admins\n" +
+                                        ":eight_pointed_black_star: - Commands for any user")
                                 .build()
                 );
             }

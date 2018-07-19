@@ -1,5 +1,6 @@
 package com.georlegacy.general.vestrimu.commands;
 
+import com.georlegacy.general.vestrimu.App;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
@@ -8,22 +9,26 @@ import com.georlegacy.general.vestrimu.util.Constants;
 import com.georlegacy.general.vestrimu.util.URLUtil;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Icon;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.webhook.WebhookClient;
+import net.dv8tion.jda.webhook.WebhookClientBuilder;
+import net.dv8tion.jda.webhook.WebhookMessageBuilder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 public class WebhookCommand extends Command {
 
     @Inject private SQLManager sqlManager;
 
     public WebhookCommand() {
-        super(new String[]{"wh", "webhook", "sendwebhook"}, "Sends webhooks to the server.", "<channel>", CommandAccessType.SERVER_ADMIN, true);
+        super(new String[]{"wh", "webhook", "sendwebhook"}, "Sends webhooks to the server.", "<channel> <args>", CommandAccessType.SERVER_ADMIN, true);
     }
 
     @Override
@@ -36,7 +41,7 @@ public class WebhookCommand extends Command {
         EmbedBuilder argumentsHelp = new EmbedBuilder();
         argumentsHelp
                 .setTitle("Arguments")
-                .setDescription("Below are all arguments for the webhook command, each of which begins with `--` and their values are supplied as like below after the mentioned channel to send to ```--plainMessage:This is the plain text before the embed```*Note: Do not use `--` within the value for any arguments*")
+                .setDescription("Below are all arguments for the webhook command, each of which begins with `--` and their values are supplied as like below **after the mentioned channel to send to** ```--plainMessage:This is the plain text before the embed```*Note: Do not use `--` within the value for any arguments*")
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setFooter("Vestrimu", Constants.ICON_URL)
                 .addField("--avatarUrl", "The URL for the avatar of the webhook when the message is sent", true)
@@ -317,7 +322,77 @@ public class WebhookCommand extends Command {
             return;
         }
 
-        
+        final String avatarUrlFinal = avatarUrl;
+        final String webhookNameFinal = webhookName;
+        final String plainMessageFinal = plainMessage;
+        final String embedTitleFinal = embedTitle;
+        final String embedDescriptionFinal = embedDescription;
+        final String embedFooterTextFinal = embedFooterText;
+        final String embedFooterIconUrlFinal = embedFooterIconUrl;
+        final String embedThumbnailUrlFinal = embedThumbnailUrl;
+        final String embedImageUrlFinal = embedImageUrl;
+        final String embedAuthorNameFinal = embedAuthorName;
+        final String embedAuthorIconUrlFinal = embedAuthorIconUrl;
+        final boolean fieldsInlineFinal = fieldsInline;
+        final HashMap<String, String> fieldsFinal = fields;
+
+        event.getGuild().getWebhooks().queue(webhooks -> webhooks.forEach(webhook -> {
+            if (webhook.getId().equals(sqlManager.readGuild(event.getGuild().getId()).getPrimarywebhookid())) {
+                EmbedBuilder embed = new EmbedBuilder();
+                if (embedTitleFinal != null)
+                    embed.setTitle(embedTitleFinal);
+                if (embedDescriptionFinal != null)
+                    embed.setDescription(embedDescriptionFinal);
+                if (embedFooterTextFinal != null)
+                    embed.setFooter(embedFooterTextFinal, embedFooterIconUrlFinal);
+                if (embedThumbnailUrlFinal != null)
+                    embed.setThumbnail(embedThumbnailUrlFinal);
+                if (embedImageUrlFinal != null)
+                    embed.setImage(embedImageUrlFinal);
+                if (embedAuthorNameFinal != null)
+                    if (embedAuthorIconUrlFinal != null)
+                        embed.setAuthor(embedAuthorNameFinal, "https://discordapp.com", embedAuthorIconUrlFinal);
+                    else
+                        embed.setAuthor(embedAuthorNameFinal);
+                for (Map.Entry<String, String> field : fieldsFinal.entrySet())
+                    embed.addField(field.getKey(), field.getValue(), fieldsInlineFinal);
+
+                WebhookClient client = webhook.newClient().build();
+                WebhookMessageBuilder builder = new WebhookMessageBuilder();
+                if (plainMessageFinal != null)
+                    builder.append(plainMessageFinal);
+                if (!embed.isEmpty())
+                    builder.addEmbeds(embed.build());
+
+                try {
+                    webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal).queue();
+                    HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
+                    con.addRequestProperty("User-Agent", "Mozilla/4.76");
+                    webhook.getManager().setAvatar(avatarUrlFinal == null ? Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon.from(con.getInputStream())).queue();
+                    webhook.getManager().setChannel(mentioned.get(0)).queue(consumer -> {
+                            client.send(builder.build());
+                            client.close();
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                webhook.getManager().setName("Vestrimu Primary Webhook").queue();
+                try {
+                    webhook.getManager().setAvatar(Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png"))).queue();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+            EmbedBuilder eb = new EmbedBuilder();
+            eb
+                    .setTitle("Sorry")
+                    .setDescription("An error occurred whilst attempting to send the message via webhook.")
+                    .setColor(Constants.VESTRIMU_PURPLE)
+                    .setFooter("Vestrimu", Constants.ICON_URL);
+            channel.sendMessage(eb.build());
+        }));
 
     }
 
