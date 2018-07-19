@@ -27,7 +27,8 @@ public class StatsCommand extends Command {
                 .setTitle("**Stats**")
                 .addField("**Guilds**", String.valueOf(event.getJDA().getGuilds().size()), true)
                 .addField("**Uptime**", (System.currentTimeMillis() - Vestrimu.getInstance().getStartupTime()) / 1000 / 60 / 60 + " hours", true)
-                .addField("**Commands**", String.valueOf(Vestrimu.getInstance().getCommandManager().getCommands().size()), true);
+                .addField("**Commands**", String.valueOf(Vestrimu.getInstance().getCommandManager().getCommands().size()), true)
+                .setFooter("Vestrimu", Constants.ICON_URL);
 
         channel.sendMessage(eb.build()).queue();
     }

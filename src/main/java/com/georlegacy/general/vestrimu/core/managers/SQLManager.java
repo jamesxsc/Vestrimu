@@ -18,7 +18,7 @@ public class SQLManager {
     public SQLManager() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
+            connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu?autoReconnect=true&useUnicode=yes", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
             statement = connection.createStatement();
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();

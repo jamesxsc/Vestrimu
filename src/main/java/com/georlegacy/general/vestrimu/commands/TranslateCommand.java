@@ -31,7 +31,8 @@ public class TranslateCommand extends Command {
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setTitle("**Failed**")
-                    .setDescription("You didn't provide a language or anything to translate, try using this format\n`translate " + getHelp() + "`");
+                    .setDescription("You didn't provide a language or anything to translate, try using this format\n`translate " + getHelp() + "`")
+                    .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
             return;
         }
@@ -40,7 +41,8 @@ public class TranslateCommand extends Command {
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setTitle("**Failed**")
-                    .setDescription("You didn't provide anything to translate, try using this format\n`translate " + getHelp() + "`");
+                    .setDescription("You didn't provide anything to translate, try using this format\n`translate " + getHelp() + "`")
+                    .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
             return;
         }
@@ -52,7 +54,8 @@ public class TranslateCommand extends Command {
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setTitle("**Failed**")
-                    .setDescription("The language you provided (`" + args.get(0) + "`) is not a valid language. Find a list fo valid languages here\ninsert link");
+                    .setDescription("The language you provided (`" + args.get(0) + "`) is not a valid language. Find a list fo valid languages here\ninsert link")
+                    .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
             return;
         }
@@ -63,7 +66,8 @@ public class TranslateCommand extends Command {
         eb
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setTitle("**Success**")
-                .addField("Translation", translated, false);
+                .addField("Translation", translated, false)
+                .setFooter("Vestrimu", Constants.ICON_URL);
         channel.sendMessage(eb.build()).queue();
     }
 

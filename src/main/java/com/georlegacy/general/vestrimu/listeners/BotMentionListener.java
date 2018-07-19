@@ -82,6 +82,8 @@ public class BotMentionListener extends ListenerAdapter {
             // Commands
             EmbedBuilder commands = new EmbedBuilder();
             for (Command command : Vestrimu.getInstance().getCommandManager().getCommands()) {
+                if (!sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() && command.isOnlyAdminModeServers())
+                    continue;
                 if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) && !(Constants.ADMIN_IDS.contains(message.getAuthor().getId())))
                     continue;
                 if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) && (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() ? !(event.getMember().getRoles().contains(event.getGuild().getRoleById(sqlManager.readGuild(event.getGuild().getId()).getBotaccessroleid()))) : !(event.getMember().isOwner())))
@@ -103,7 +105,7 @@ public class BotMentionListener extends ListenerAdapter {
                     commands
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setTitle("Commands")
-                            .setDescription("Below are all of your available commands")
+                            .setDescription("Below are all of your available commands in **" + event.getGuild().getName() + "**\nTo see all commands click [here](TBC)")
                             .build()
             );
 

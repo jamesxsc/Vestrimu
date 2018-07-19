@@ -29,7 +29,8 @@ public class AccessRequiredForHelpToggleCommand extends Command {
     public void execute(MessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
-        List<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().replaceFirst(sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "pinghelp", "").trim().split(" ")));
+        List<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
+        args.remove(0);
 
         GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
 
