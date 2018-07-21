@@ -8,8 +8,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.DecimalFormat;
 
 public class StatsCommand extends Command {
 
@@ -25,9 +24,8 @@ public class StatsCommand extends Command {
         eb
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setTitle("**Stats**")
-                .addField("**Guilds**", String.valueOf(event.getJDA().getGuilds().size()), true)
-                .addField("**Uptime**", (System.currentTimeMillis() - Vestrimu.getInstance().getStartupTime()) / 1000 / 60 / 60 + " hours", true)
-                .addField("**Commands**", String.valueOf(Vestrimu.getInstance().getCommandManager().getCommands().size()), true)
+                .addField("Guilds", String.valueOf(event.getJDA().getGuilds().size()), true)
+                .addField("Uptime", new DecimalFormat("#.####").format((double) (System.currentTimeMillis() - Vestrimu.getInstance().getStartupTime()) / 1000 / 60 / 60 / 24) + " days", true)
                 .setFooter("Vestrimu", Constants.ICON_URL);
 
         channel.sendMessage(eb.build()).queue();

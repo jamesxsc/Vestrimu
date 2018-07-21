@@ -5,6 +5,7 @@ import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessTyp
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -58,7 +59,13 @@ public class CommandManager extends ListenerAdapter {
             for (String cmdname : cmdnames) {
                 if (message.getContentRaw().toLowerCase().startsWith(sqlManager.readGuild(event.getGuild().getId()).getPrefix() + cmdname)) {
                     if (command.isOnlyAdminModeServers() && !sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode()) {
-                        channel.sendMessage("only admin servers").queue();
+                        EmbedBuilder eb = new EmbedBuilder();
+                        eb
+                                .setTitle("Sorry")
+                                .setDescription("That command can only be used in servers that I administrate")
+                                .setColor(Constants.VESTRIMU_PURPLE)
+                                .setFooter("Vestrimu", Constants.ICON_URL);
+                        channel.sendMessage(eb.build()).queue();
                         return;
                     }
                     if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN)) {
@@ -66,7 +73,13 @@ public class CommandManager extends ListenerAdapter {
                             command.run(event);
                             return;
                         } else {
-                            channel.sendMessage("no perms lol, only super admins").queue();
+                            EmbedBuilder eb = new EmbedBuilder();
+                            eb
+                                    .setTitle("Sorry")
+                                    .setDescription("That command can only be used by super administrators")
+                                    .setColor(Constants.VESTRIMU_PURPLE)
+                                    .setFooter("Vestrimu", Constants.ICON_URL);
+                            channel.sendMessage(eb.build()).queue();
                             return;
                         }
                     } else if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN)) {
@@ -75,7 +88,13 @@ public class CommandManager extends ListenerAdapter {
                                 command.run(event);
                                 return;
                             } else {
-                                channel.sendMessage("no perms xd, only server admins").queue();
+                                EmbedBuilder eb = new EmbedBuilder();
+                                eb
+                                        .setTitle("Sorry")
+                                        .setDescription("That command can only be used by server administrators")
+                                        .setColor(Constants.VESTRIMU_PURPLE)
+                                        .setFooter("Vestrimu", Constants.ICON_URL);
+                                channel.sendMessage(eb.build()).queue();
                                 return;
                             }
                         } else {
@@ -83,7 +102,13 @@ public class CommandManager extends ListenerAdapter {
                                 command.run(event);
                                 return;
                             } else {
-                                channel.sendMessage("no perms xd, only server owner").queue();
+                                EmbedBuilder eb = new EmbedBuilder();
+                                eb
+                                        .setTitle("Sorry")
+                                        .setDescription("That command can only be used by the server owner")
+                                        .setColor(Constants.VESTRIMU_PURPLE)
+                                        .setFooter("Vestrimu", Constants.ICON_URL);
+                                channel.sendMessage(eb.build()).queue();
                                 return;
                             }
                         }

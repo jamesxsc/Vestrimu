@@ -44,9 +44,13 @@ public class BotMentionListener extends ListenerAdapter {
                         break;
                     }
                 }
-                if (!hasAccess)
+                if (!hasAccess) {
+                    message.addReaction("\u274C").queue();
                     return;
+                }
             }
+
+            message.addReaction("\u2705").queue();
 
             List<MessageEmbed> helps = new ArrayList<>();
 

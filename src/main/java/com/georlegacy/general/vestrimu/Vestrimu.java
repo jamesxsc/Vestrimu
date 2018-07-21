@@ -21,6 +21,7 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 
 import javax.security.auth.login.LoginException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,14 +41,17 @@ public class Vestrimu {
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
     @Inject private StopCommand stopCommand;
+    @Inject private RecordCommand recordCommand;
 
     @Inject private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
     @Inject private RestoreCommand restoreCommand;
     @Inject private SetPrefixCommand setPrefixCommand;
     @Inject private WebhookCommand webhookCommand;
 
+    @Inject private HelpCommand helpCommand;
     @Inject private StatsCommand statsCommand;
     @Inject private TranslateCommand translateCommand;
+    @Inject private UserInfoCommand userInfoCommand;
 
     @Getter private JDA jda;
 
@@ -75,14 +79,17 @@ public class Vestrimu {
         // Adding commands
         commandManager.addCommand(evaluateCommand);
         commandManager.addCommand(stopCommand);
+        commandManager.addCommand(recordCommand);
 
         commandManager.addCommand(accessRequiredForHelpToggleCommand);
         commandManager.addCommand(restoreCommand);
         commandManager.addCommand(setPrefixCommand);
         commandManager.addCommand(webhookCommand);
 
+        commandManager.addCommand(helpCommand);
         commandManager.addCommand(statsCommand);
         commandManager.addCommand(translateCommand);
+        commandManager.addCommand(userInfoCommand);
 
         webhookManager.loadWebhooks();
 
@@ -101,8 +108,9 @@ public class Vestrimu {
         try {
             Thread.sleep(10000);
             System.out.println("Shutting down Vestrimu");
+            sqlManager.getConnection().close();
             jda.shutdownNow();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -111,7 +119,7 @@ public class Vestrimu {
         try {
             jda = new JDABuilder(AccountType.BOT)
                     .setToken(SecretConstants.TOKEN)
-                    .setGame(Game.watching("615283.net"))
+                    .setGame(Game.listening("@Vestrimu"))
                     .setAutoReconnect(true)
                     .setBulkDeleteSplittingEnabled(false)
                     .setStatus(OnlineStatus.IDLE)

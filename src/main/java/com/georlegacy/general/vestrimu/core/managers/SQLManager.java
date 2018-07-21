@@ -4,14 +4,17 @@ import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.google.inject.Singleton;
+import lombok.Getter;
 import net.dv8tion.jda.core.entities.Guild;
 
 import java.sql.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class SQLManager {
 
-    private Connection connection;
+    @Getter private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
 
@@ -20,6 +23,14 @@ public class SQLManager {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu?autoReconnect=true&useUnicode=yes", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
             statement = connection.createStatement();
+            Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
+                try {
+                    System.out.println("Updating SQL statement");
+                    statement = connection.createStatement();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }, 1, 180, TimeUnit.SECONDS);
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }

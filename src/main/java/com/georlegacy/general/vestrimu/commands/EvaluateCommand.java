@@ -67,8 +67,8 @@ public class EvaluateCommand extends Command {
             } else {
                 channel.sendMessage(details(output, System.currentTimeMillis() - currentTime)).queue();
             }
-        } catch (ScriptException ex) {
-            channel.sendMessage(error(ex.getMessage(), System.currentTimeMillis() - currentTime)).queue();
+        } catch (Exception ex) {
+            channel.sendMessage(error(ex.toString(), System.currentTimeMillis() - currentTime)).queue();
         }
     }
 

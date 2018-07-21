@@ -9,10 +9,7 @@ import com.georlegacy.general.vestrimu.util.Constants;
 import com.georlegacy.general.vestrimu.util.URLUtil;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Icon;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.webhook.WebhookClient;
 import net.dv8tion.jda.webhook.WebhookClientBuilder;
@@ -336,63 +333,68 @@ public class WebhookCommand extends Command {
         final boolean fieldsInlineFinal = fieldsInline;
         final HashMap<String, String> fieldsFinal = fields;
 
-        event.getGuild().getWebhooks().queue(webhooks -> webhooks.forEach(webhook -> {
-            if (webhook.getId().equals(sqlManager.readGuild(event.getGuild().getId()).getPrimarywebhookid())) {
-                EmbedBuilder embed = new EmbedBuilder();
-                if (embedTitleFinal != null)
-                    embed.setTitle(embedTitleFinal);
-                if (embedDescriptionFinal != null)
-                    embed.setDescription(embedDescriptionFinal);
-                if (embedFooterTextFinal != null)
-                    embed.setFooter(embedFooterTextFinal, embedFooterIconUrlFinal);
-                if (embedThumbnailUrlFinal != null)
-                    embed.setThumbnail(embedThumbnailUrlFinal);
-                if (embedImageUrlFinal != null)
-                    embed.setImage(embedImageUrlFinal);
-                if (embedAuthorNameFinal != null)
-                    if (embedAuthorIconUrlFinal != null)
-                        embed.setAuthor(embedAuthorNameFinal, "https://discordapp.com", embedAuthorIconUrlFinal);
-                    else
-                        embed.setAuthor(embedAuthorNameFinal);
-                for (Map.Entry<String, String> field : fieldsFinal.entrySet())
-                    embed.addField(field.getKey(), field.getValue(), fieldsInlineFinal);
+        event.getGuild().getWebhooks().queue(webhooks -> {
+            Optional<Webhook> optionalWebhook = webhooks.stream().filter(webhook -> webhook.getId().equals(sqlManager.readGuild(event.getGuild().getId()).getPrimarywebhookid())).findFirst();
+            if (optionalWebhook.isPresent()) {
+                optionalWebhook.ifPresent(webhook -> {
+                    EmbedBuilder embed = new EmbedBuilder();
+                    if (embedTitleFinal != null)
+                        embed.setTitle(embedTitleFinal);
+                    if (embedDescriptionFinal != null)
+                        embed.setDescription(embedDescriptionFinal);
+                    if (embedFooterTextFinal != null)
+                        embed.setFooter(embedFooterTextFinal, embedFooterIconUrlFinal);
+                    if (embedThumbnailUrlFinal != null)
+                        embed.setThumbnail(embedThumbnailUrlFinal);
+                    if (embedImageUrlFinal != null)
+                        embed.setImage(embedImageUrlFinal);
+                    if (embedAuthorNameFinal != null)
+                        if (embedAuthorIconUrlFinal != null)
+                            embed.setAuthor(embedAuthorNameFinal, "https://discordapp.com", embedAuthorIconUrlFinal);
+                        else
+                            embed.setAuthor(embedAuthorNameFinal);
+                    for (Map.Entry<String, String> field : fieldsFinal.entrySet())
+                        embed.addField(field.getKey(), field.getValue(), fieldsInlineFinal);
 
-                WebhookClient client = webhook.newClient().build();
-                WebhookMessageBuilder builder = new WebhookMessageBuilder();
-                if (plainMessageFinal != null)
-                    builder.append(plainMessageFinal);
-                if (!embed.isEmpty())
-                    builder.addEmbeds(embed.build());
+                    WebhookClient client = webhook.newClient().build();
+                    WebhookMessageBuilder builder = new WebhookMessageBuilder();
+                    if (plainMessageFinal != null)
+                        builder.append(plainMessageFinal);
+                    if (!embed.isEmpty())
+                        builder.addEmbeds(embed.build());
 
-                try {
-                    webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal).queue();
-                    HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
-                    con.addRequestProperty("User-Agent", "Mozilla/4.76");
-                    webhook.getManager().setAvatar(avatarUrlFinal == null ? Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon.from(con.getInputStream())).queue();
-                    webhook.getManager().setChannel(mentioned.get(0)).queue(consumer -> {
+                    try {
+                        webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal).queue();
+                        if (avatarUrlFinal != null) {
+                            HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
+                            con.addRequestProperty("User-Agent", "Mozilla/4.76");
+                            webhook.getManager().setAvatar(avatarUrlFinal == null ? Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon.from(con.getInputStream())).queue();
+                        }
+                        webhook.getManager().setChannel(mentioned.get(0)).queue(consumer -> {
                             client.send(builder.build());
                             client.close();
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                webhook.getManager().setName("Vestrimu Primary Webhook").queue();
-                try {
-                    webhook.getManager().setAvatar(Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png"))).queue();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return;
+                    webhook.getManager().setName("Vestrimu Primary Webhook").queue();
+                    try {
+                        webhook.getManager().setAvatar(Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png"))).queue();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                EmbedBuilder eb = new EmbedBuilder();
+                eb
+                        .setTitle("Sorry")
+                        .setDescription("The primary webhook for this server has been deleted and/or modified. Try running `" + sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "botfix` to resolve issues.")
+                        .setColor(Constants.VESTRIMU_PURPLE)
+                        .setFooter("Vestrimu", Constants.ICON_URL);
+                channel.sendMessage(eb.build()).queue();
             }
-            EmbedBuilder eb = new EmbedBuilder();
-            eb
-                    .setTitle("Sorry")
-                    .setDescription("An error occurred whilst attempting to send the message via webhook.")
-                    .setColor(Constants.VESTRIMU_PURPLE)
-                    .setFooter("Vestrimu", Constants.ICON_URL);
-            channel.sendMessage(eb.build());
-        }));
+        });
 
     }
 

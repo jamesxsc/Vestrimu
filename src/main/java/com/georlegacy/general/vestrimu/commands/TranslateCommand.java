@@ -30,7 +30,7 @@ public class TranslateCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
-                    .setTitle("**Failed**")
+                    .setTitle("**Sorry**")
                     .setDescription("You didn't provide a language or anything to translate, try using this format\n`translate " + getHelp() + "`")
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
@@ -40,7 +40,7 @@ public class TranslateCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
-                    .setTitle("**Failed**")
+                    .setTitle("**Sorry**")
                     .setDescription("You didn't provide anything to translate, try using this format\n`translate " + getHelp() + "`")
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
@@ -53,7 +53,7 @@ public class TranslateCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
-                    .setTitle("**Failed**")
+                    .setTitle("**Sorry**")
                     .setDescription("The language you provided (`" + args.get(0) + "`) is not a valid language. Find a list fo valid languages here\ninsert link")
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
