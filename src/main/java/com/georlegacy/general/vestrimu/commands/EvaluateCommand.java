@@ -35,8 +35,8 @@ public class EvaluateCommand extends Command {
                     "java.lang," +
                     "java.util," +
                     "java.awt," +
-                    "Packages.net.dv8tion.jda.core" +
-                    "Packages.com.georlegacy.general.vestrimu" +
+                    "Packages.net.dv8tion.jda.core," +
+                    "Packages.com.georlegacy.general.vestrimu," +
                     "Packages.com.rmtheis.yandtran" +
             ");");
         } catch (ScriptException e) {

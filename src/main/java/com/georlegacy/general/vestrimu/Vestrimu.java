@@ -5,7 +5,6 @@ import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
-import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;

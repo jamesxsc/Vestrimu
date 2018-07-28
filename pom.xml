@@ -64,8 +64,9 @@
             <url>http://jcenter.bintray.com</url>
         </repository>
         <repository>
-            <id>615283-repo</id>
-            <url>http://repo.615283.net:8443/repository/maven-releases/</url>
+            <id>615283</id>
+            <name>615283-repo</name>
+            <url>https://repo.615283.net:8443/repository/maven-releases/</url>
         </repository>
     </repositories>
 
@@ -102,6 +103,17 @@
             <version>1.1</version>
             <classifier>shaded</classifier>
         </dependency>
+        <dependency>
+            <groupId>it.sauronsoftware</groupId>
+            <artifactId>jave</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+
     </dependencies>
 
 </project>
