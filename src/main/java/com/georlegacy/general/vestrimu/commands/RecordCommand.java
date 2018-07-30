@@ -66,7 +66,7 @@ public class RecordCommand extends Command {
                         System.out.println(IOUtils.toByteArray(pcmInputStream).length / 2);
                         AudioSystem.write(new AudioInputStream(pcmInputStream,
                                 new AudioFormat(48000f, 16, 2, true,
-                                        true), (recordHandler.getOutputStream().toByteArray().length / 12) * seconds.get()),
+                                        true), wavFile.length() / 32),
                                 AudioFileFormat.Type.WAVE, wavOutputStream);
                         wavOutputStream.close();
                         pcmInputStream.close();

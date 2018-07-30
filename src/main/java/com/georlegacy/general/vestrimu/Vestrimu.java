@@ -11,6 +11,7 @@ import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -33,6 +34,8 @@ public class Vestrimu {
     @Inject private SQLManager sqlManager;
 
     // Listeners
+    @Getter private EventWaiter eventWaiter;
+
     @Inject private BotMentionListener botMentionListener;
     @Inject private BotModeReactionSelectionListener botModeReactionSelectionListener;
     @Inject private JoinNewGuildListener joinNewGuildListener;
@@ -70,6 +73,8 @@ public class Vestrimu {
         BinderModule module = new BinderModule(this.getClass());
         Injector injector = module.createInjector();
         injector.injectMembers(this);
+
+        eventWaiter = new EventWaiter();
 
         startBot();
 
@@ -123,6 +128,7 @@ public class Vestrimu {
                     .setBulkDeleteSplittingEnabled(false)
                     .setStatus(OnlineStatus.IDLE)
                     .addEventListener(
+                            eventWaiter,
                             commandManager,
                             botMentionListener,
                             botModeReactionSelectionListener,
