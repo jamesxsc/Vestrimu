@@ -52,7 +52,7 @@ public class Logger {
 
     public void log(Level level, String message) {
         if (doConsole) {
-            System.out.printf("[%s %S] %s", new Date().toGMTString(), level.getName(), message);
+            System.out.printf("[%s %S] %s\n", new Date().toGMTString(), level.getName(), message);
             latestLogToConsole = "[" +
                     new Date().toGMTString() +
                     " " +
@@ -83,7 +83,7 @@ public class Logger {
     }
 
     public void logConsole(Level level, String message) {
-        System.out.printf("[%s %S] %s", new Date().toGMTString(), level.getName(), message);
+        System.out.printf("[%s %S] %s\n", new Date().toGMTString(), level.getName(), message);
         latestLogToConsole = "[" +
                 new Date().toGMTString() +
                 " " +

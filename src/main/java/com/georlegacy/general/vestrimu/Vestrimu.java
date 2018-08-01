@@ -90,8 +90,6 @@ public class Vestrimu {
 
         startBot();
 
-        threadpool.scheduleAtFixedRate(clearTempDirectory, 0, 45, TimeUnit.MINUTES);
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
         // Adding commands
         commandManager.addCommand(evaluateCommand);
@@ -109,6 +107,9 @@ public class Vestrimu {
         commandManager.addCommand(userInfoCommand);
 
         webhookManager.loadWebhooks();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+        threadpool.scheduleAtFixedRate(clearTempDirectory, 0, 45, TimeUnit.MINUTES);
 
         shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.ONLINE);
     }
