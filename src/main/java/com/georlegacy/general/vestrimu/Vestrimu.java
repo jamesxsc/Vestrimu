@@ -5,27 +5,26 @@ import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
+import com.georlegacy.general.vestrimu.core.tasks.ClearTempDirectory;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
+import com.georlegacy.general.vestrimu.logging.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
-import net.dv8tion.jda.bot.sharding.DefaultShardManager;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class Vestrimu {
@@ -41,6 +40,9 @@ public class Vestrimu {
     @Inject private BotMentionListener botMentionListener;
     @Inject private BotModeReactionSelectionListener botModeReactionSelectionListener;
     @Inject private JoinNewGuildListener joinNewGuildListener;
+
+    // Tasks
+    @Inject private ClearTempDirectory clearTempDirectory;
 
     // Commands
     @Inject private EvaluateCommand evaluateCommand;
@@ -58,28 +60,37 @@ public class Vestrimu {
     @Inject private UserInfoCommand userInfoCommand;
 
     @Getter private ShardManager shardManager;
+    @Getter private ScheduledExecutorService threadpool;
 
     @Getter private final long startupTime;
 
+    private static Logger logger;
     private static Vestrimu instance;
 
     public static Vestrimu getInstance() {
         return instance;
     }
 
+    public static Logger getLogger() {
+        return logger;
+    }
+
     public Vestrimu() {
         startupTime = System.currentTimeMillis();
 
         instance = this;
+        logger = new Logger(true, "474249899756486676");
 
         BinderModule module = new BinderModule(this.getClass());
         Injector injector = module.createInjector();
         injector.injectMembers(this);
 
         eventWaiter = new EventWaiter();
+        threadpool = Executors.newSingleThreadScheduledExecutor();
 
         startBot();
 
+        threadpool.scheduleAtFixedRate(clearTempDirectory, 0, 45, TimeUnit.MINUTES);
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
         // Adding commands
@@ -99,21 +110,15 @@ public class Vestrimu {
 
         webhookManager.loadWebhooks();
 
-        for (Guild guild : shardManager.getShardById(0).getGuilds()) {
-            if (sqlManager.isWaiting(guild) != null)
-                continue;
-            Logger.getGlobal().log(Level.INFO, "Guild loaded with name " + guild.getName());
-        }
-
         shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.ONLINE);
     }
 
     private void shutdown() {
-        System.out.println("Preparing to shut down");
+        logger.info("Preparing to shut down Vestrimu.");
         shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
         try {
-            Thread.sleep(10000);
-            System.out.println("Shutting down Vestrimu");
+            Thread.sleep(5000);
+            logger.info("Shutting down Vestrimu");
             sqlManager.getConnection().close();
             shardManager.getShardById(0).shutdownNow();
         } catch (InterruptedException | SQLException e) {

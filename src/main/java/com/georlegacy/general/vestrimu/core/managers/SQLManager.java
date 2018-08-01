@@ -20,13 +20,13 @@ public class SQLManager {
 
     public SQLManager() {
         try {
-            System.out.println("Loading SQL Manager...");
+            Vestrimu.getLogger().info("Loading SQL Manager...");
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu?autoReconnect=true", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
             statement = connection.createStatement();
             Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
                 try {
-                    System.out.println("Updating SQL statement");
+                    Vestrimu.getLogger().info("Updating SQL statement");
                     statement = connection.createStatement();
                 } catch (SQLException e) {
                     e.printStackTrace();
