@@ -20,8 +20,9 @@ public class SQLManager {
 
     public SQLManager() {
         try {
+            System.out.println("Loading SQL Manager...");
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu?autoReconnect=true&useUnicode=yes", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
+            connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu?autoReconnect=true", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
             statement = connection.createStatement();
             Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
                 try {
@@ -30,7 +31,7 @@ public class SQLManager {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }, 1, 180, TimeUnit.SECONDS);
+            }, 0, 180, TimeUnit.SECONDS);
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }

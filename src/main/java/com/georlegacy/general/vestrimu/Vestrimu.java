@@ -13,8 +13,10 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
+import net.dv8tion.jda.bot.sharding.DefaultShardManager;
+import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
@@ -31,7 +33,7 @@ public class Vestrimu {
     // Managers
     @Getter @Inject private CommandManager commandManager;
     @Inject private WebhookManager webhookManager;
-    @Inject private SQLManager sqlManager;
+    @Getter @Inject private SQLManager sqlManager;
 
     // Listeners
     @Getter private EventWaiter eventWaiter;
@@ -55,7 +57,7 @@ public class Vestrimu {
     @Inject private TranslateCommand translateCommand;
     @Inject private UserInfoCommand userInfoCommand;
 
-    @Getter private JDA jda;
+    @Getter private ShardManager shardManager;
 
     @Getter private final long startupTime;
 
@@ -97,23 +99,23 @@ public class Vestrimu {
 
         webhookManager.loadWebhooks();
 
-        for (Guild guild : jda.getGuilds()) {
+        for (Guild guild : shardManager.getShardById(0).getGuilds()) {
             if (sqlManager.isWaiting(guild) != null)
                 continue;
             Logger.getGlobal().log(Level.INFO, "Guild loaded with name " + guild.getName());
         }
 
-        jda.getPresence().setStatus(OnlineStatus.ONLINE);
+        shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.ONLINE);
     }
 
     private void shutdown() {
         System.out.println("Preparing to shut down");
-        jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+        shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
         try {
             Thread.sleep(10000);
             System.out.println("Shutting down Vestrimu");
             sqlManager.getConnection().close();
-            jda.shutdownNow();
+            shardManager.getShardById(0).shutdownNow();
         } catch (InterruptedException | SQLException e) {
             e.printStackTrace();
         }
@@ -121,23 +123,21 @@ public class Vestrimu {
 
     private void startBot() {
         try {
-            jda = new JDABuilder(AccountType.BOT)
+            shardManager = new DefaultShardManagerBuilder()
                     .setToken(SecretConstants.TOKEN)
                     .setGame(Game.listening("@Vestrimu"))
                     .setAutoReconnect(true)
                     .setBulkDeleteSplittingEnabled(false)
                     .setStatus(OnlineStatus.IDLE)
-                    .addEventListener(
+                    .addEventListeners(
                             eventWaiter,
                             commandManager,
                             botMentionListener,
                             botModeReactionSelectionListener,
                             joinNewGuildListener
                     )
-                    .buildBlocking();
+                    .build();
         } catch (LoginException ex) {
-            ex.printStackTrace();
-        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
     }

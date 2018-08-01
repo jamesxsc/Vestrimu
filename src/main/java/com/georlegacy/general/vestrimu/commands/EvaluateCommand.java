@@ -1,6 +1,7 @@
 package com.georlegacy.general.vestrimu.commands;
 
 import com.georlegacy.general.vestrimu.SecretConstants;
+import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
@@ -55,6 +56,7 @@ public class EvaluateCommand extends Command {
 
         scriptEngine.put("message", message);
         scriptEngine.put("jda", event.getJDA());
+        scriptEngine.put("vestrimu", Vestrimu.getInstance());
         scriptEngine.put("guild", event.getGuild());
         scriptEngine.put("channel", channel);
         scriptEngine.put("author", event.getAuthor());

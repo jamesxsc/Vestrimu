@@ -32,7 +32,7 @@ public class WebhookManager {
     }
 
     public void loadWebhooks() {
-        for (Guild guild : Vestrimu.getInstance().getJda().getGuilds()) {
+        for (Guild guild : Vestrimu.getInstance().getShardManager().getGuilds()) {
             loadWebhook(guild);
         }
     }
