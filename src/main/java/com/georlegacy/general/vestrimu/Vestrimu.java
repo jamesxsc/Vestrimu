@@ -55,6 +55,7 @@ public class Vestrimu {
     @Inject private WebhookCommand webhookCommand;
 
     @Inject private HelpCommand helpCommand;
+    @Inject private GuildInfoCommand guildInfoCommand;
     @Inject private StatsCommand statsCommand;
     @Inject private TranslateCommand translateCommand;
     @Inject private UserInfoCommand userInfoCommand;
@@ -102,6 +103,7 @@ public class Vestrimu {
         commandManager.addCommand(webhookCommand);
 
         commandManager.addCommand(helpCommand);
+        commandManager.addCommand(guildInfoCommand);
         commandManager.addCommand(statsCommand);
         commandManager.addCommand(translateCommand);
         commandManager.addCommand(userInfoCommand);

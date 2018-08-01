@@ -31,7 +31,7 @@ public class SQLManager {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }, 0, 180, TimeUnit.SECONDS);
+            }, 0, 5, TimeUnit.MINUTES);
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }

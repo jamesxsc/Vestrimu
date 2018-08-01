@@ -124,6 +124,10 @@ public class Logger {
         log(Level.SEVERE, message);
     }
 
+    public void debug(String message) {
+        log(new DebugLevel(), message);
+    }
+
     public void warn(String message) {
         log(Level.WARNING, message);
     }
