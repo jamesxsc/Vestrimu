@@ -23,8 +23,10 @@ public class StatsCommand extends Command {
         EmbedBuilder eb = new EmbedBuilder();
         eb
                 .setColor(Constants.VESTRIMU_PURPLE)
-                .setTitle("**Stats**")
+                .setTitle("Stats")
                 .addField("Guilds", String.valueOf(event.getJDA().getGuilds().size()), true)
+                .addField("Text Channels", String.valueOf(Vestrimu.getInstance().getShardManager().getTextChannels().size()), true)
+                .addField("Voice Channels", String.valueOf(Vestrimu.getInstance().getShardManager().getVoiceChannels().size()), true)
                 .addField("Uptime", new DecimalFormat("#.####").format((double) (System.currentTimeMillis() - Vestrimu.getInstance().getStartupTime()) / 1000 / 60 / 60 / 24) + " days", true)
                 .setFooter("Vestrimu", Constants.ICON_URL);
 

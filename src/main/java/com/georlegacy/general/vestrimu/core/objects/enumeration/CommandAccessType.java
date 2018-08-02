@@ -6,8 +6,6 @@ public enum CommandAccessType {
     SERVER_ADMIN,
     USER_ANY;
 
-    CommandAccessType() {
-
-    }
+    CommandAccessType() {}
 
 }

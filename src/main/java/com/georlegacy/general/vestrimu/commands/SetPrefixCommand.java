@@ -2,6 +2,7 @@ package com.georlegacy.general.vestrimu.commands;
 
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
@@ -27,7 +28,7 @@ public class SetPrefixCommand extends Command {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         Guild guild = event.getGuild();
-        String raw = message.getContentRaw();
+        GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
 
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
         args.remove(0);
@@ -36,16 +37,16 @@ public class SetPrefixCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setTitle("Prefix")
-                    .setDescription("The current prefix is `" + sqlManager.readGuild(guild.getId()).getPrefix() + "`\nTo change it, run this command again with your desired prefix after the command")
+                    .setDescription("The current prefix is `" + configuration.getPrefix() + "`\nTo change it, run this command again with your desired prefix after the command")
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
             return;
         }
 
-        String oldPrefix = sqlManager.readGuild(guild.getId()).getPrefix();
+        String oldPrefix = configuration.getPrefix();
         String newPrefix = args.get(0);
-        sqlManager.updateGuild(sqlManager.readGuild(guild.getId()).setPrefix(newPrefix));
+        sqlManager.updateGuild(configuration.setPrefix(newPrefix));
         EmbedBuilder eb = new EmbedBuilder();
         eb
                 .setTitle("Success")
