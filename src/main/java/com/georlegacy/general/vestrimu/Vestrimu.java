@@ -1,6 +1,7 @@
 package com.georlegacy.general.vestrimu;
 
 import com.georlegacy.general.vestrimu.commands.*;
+import com.georlegacy.general.vestrimu.commands.behaviour.BehaviourInfoCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
@@ -59,6 +60,7 @@ public class Vestrimu {
     @Inject private StatsCommand statsCommand;
     @Inject private TranslateCommand translateCommand;
     @Inject private UserInfoCommand userInfoCommand;
+    @Inject private BehaviourInfoCommand behaviourInfoCommand;
 
     @Getter private ShardManager shardManager;
     @Getter private ScheduledExecutorService threadpool;
@@ -107,6 +109,7 @@ public class Vestrimu {
         commandManager.addCommand(statsCommand);
         commandManager.addCommand(translateCommand);
         commandManager.addCommand(userInfoCommand);
+        commandManager.addCommand(behaviourInfoCommand);
 
         webhookManager.loadWebhooks();
 
