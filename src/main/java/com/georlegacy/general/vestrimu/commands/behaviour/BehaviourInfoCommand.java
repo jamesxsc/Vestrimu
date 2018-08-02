@@ -8,6 +8,7 @@ import com.georlegacy.general.vestrimu.core.objects.behaviour.Punishment;
 import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
+import com.georlegacy.general.vestrimu.util.time.TimeFormatter;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
@@ -72,15 +73,28 @@ public class BehaviourInfoCommand extends Command {
         else {
             List<Punishment> warnings = record.getPunishments().stream().filter(
                     p -> p.getType().equals(Punishment.PunishmentType.WARNING)).collect(Collectors.toList());
+            if (warnings.size() != 0) {
+                StringBuilder warningDetail = new StringBuilder();
+                warnings.forEach(warning -> warningDetail.append("*" + warning.getIssuer().getName() + "* warned you on *" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(warning.getIssueDate()) + "* for *" +
+                        warning.getReason() + "*" + "\n"));
 
-            StringBuilder warningDetail = new StringBuilder();
-            warnings.forEach(warning -> warningDetail.append("*" + warning.getIssuer().getName() + "* warned you on *" +
-                    new SimpleDateFormat("dd/MM/yyyy").format(warning.getIssueDate()) + "* for *" +
-                    warning.getReason() + "*" + "\n"));
+                eb
+                        .addField(":warning: " + String.valueOf(warnings.size()) + " Warnings - ",
+                                warningDetail.toString(), false);
+            }
+            List<Punishment> mutes = record.getPunishments().stream().filter(
+                    p -> p.getType().equals(Punishment.PunishmentType.MUTE)).collect(Collectors.toList());
+            if (mutes.size() != 0) {
+                StringBuilder muteDetail = new StringBuilder();
+                mutes.forEach(mute -> muteDetail.append("*" + mute.getIssuer().getName() + "* muted you on *" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(mute.getIssueDate()) + "* for *" +
+                        mute.getReason() + "* for *" + TimeFormatter.millisToTime(mute.getDurationMillis()) + "* \n"));
 
-            eb
-                    .addField(":warning: Warnings - " + String.valueOf(warnings.size()), warnings.size() == 0 ?
-                            "No warnings to show." : warningDetail.toString(), false);
+                eb
+                        .addField(":warning: " + String.valueOf(mutes.size()) + " Mutes",
+                                muteDetail.toString(), false);
+            }
         }
 
         channel.sendMessage(eb.build()).queue();
