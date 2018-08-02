@@ -1,6 +1,7 @@
 package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.core.Command;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
@@ -54,11 +55,12 @@ public class CommandManager extends ListenerAdapter {
             return;
 
         if (event.getAuthor().isBot()) return;
+        GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
         for (Command command : commands) {
             String[] cmdnames = command.getNames();
             for (String cmdname : cmdnames) {
-                if (message.getContentRaw().toLowerCase().startsWith(sqlManager.readGuild(event.getGuild().getId()).getPrefix() + cmdname)) {
-                    if (command.isOnlyAdminModeServers() && !sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode()) {
+                if (message.getContentRaw().toLowerCase().startsWith(configuration.getPrefix() + cmdname)) {
+                    if (command.isOnlyAdminModeServers() && !configuration.isAdmin_mode()) {
                         EmbedBuilder eb = new EmbedBuilder();
                         eb
                                 .setTitle("Sorry")
@@ -84,7 +86,7 @@ public class CommandManager extends ListenerAdapter {
                         }
                     } else if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN)) {
                         if (sqlManager.readGuild(guild.getId()).isAdmin_mode()) {
-                            if (event.getMember().getRoles().contains(guild.getRoleById(sqlManager.readGuild(guild.getId()).getBotaccessroleid()))) {
+                            if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotaccessroleid()))) {
                                 command.run(event);
                                 return;
                             } else {

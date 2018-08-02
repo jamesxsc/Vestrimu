@@ -4,6 +4,7 @@ import com.georlegacy.general.vestrimu.App;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.georlegacy.general.vestrimu.util.URLUtil;
@@ -33,6 +34,7 @@ public class WebhookCommand extends Command {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
+        GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
         args.remove(0);
 
         EmbedBuilder argumentsHelp = new EmbedBuilder();
@@ -268,7 +270,7 @@ public class WebhookCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setTitle("Sorry")
-                    .setDescription("`" + arg + "` is not a valid argument for this command, to view valid arguments, use `" + sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "webhook arguments`")
+                    .setDescription("`" + arg + "` is not a valid argument for this command, to view valid arguments, use `" + configuration.getPrefix() + "webhook arguments`")
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
@@ -334,7 +336,7 @@ public class WebhookCommand extends Command {
         final HashMap<String, String> fieldsFinal = fields;
 
         event.getGuild().getWebhooks().queue(webhooks -> {
-            Optional<Webhook> optionalWebhook = webhooks.stream().filter(webhook -> webhook.getId().equals(sqlManager.readGuild(event.getGuild().getId()).getPrimarywebhookid())).findFirst();
+            Optional<Webhook> optionalWebhook = webhooks.stream().filter(webhook -> webhook.getId().equals(configuration.getPrimarywebhookid())).findFirst();
             if (optionalWebhook.isPresent()) {
                 optionalWebhook.ifPresent(webhook -> {
                     EmbedBuilder embed = new EmbedBuilder();
@@ -389,7 +391,7 @@ public class WebhookCommand extends Command {
                 EmbedBuilder eb = new EmbedBuilder();
                 eb
                         .setTitle("Sorry")
-                        .setDescription("The primary webhook for this server has been deleted and/or modified. Try running `" + sqlManager.readGuild(event.getGuild().getId()).getPrefix() + "botfix` to resolve issues.")
+                        .setDescription("The primary webhook for this server has been deleted and/or modified. Try running `" + configuration.getPrefix() + "botfix` to resolve issues.")
                         .setColor(Constants.VESTRIMU_PURPLE)
                         .setFooter("Vestrimu", Constants.ICON_URL);
                 channel.sendMessage(eb.build()).queue();

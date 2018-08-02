@@ -2,12 +2,13 @@ package com.georlegacy.general.vestrimu.commands;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
+import com.georlegacy.general.vestrimu.core.managers.SQLManager;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.handlers.audio.AudioRecordHandler;
 import com.georlegacy.general.vestrimu.util.AudioUtil;
 import com.georlegacy.general.vestrimu.util.Constants;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import net.dv8tion.jda.client.events.call.voice.CallVoiceLeaveEvent;
+import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
@@ -27,17 +28,28 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RecordCommand extends Command {
+
+    @Inject private SQLManager sqlManager;
+
     @Override
     public void execute(MessageReceivedEvent event) {
         Member member = event.getMember();
         MessageChannel channel = event.getChannel();
         Guild guild = event.getGuild();
 
+        GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
+
         AudioRecordHandler recordHandler = new AudioRecordHandler();
         guild.getAudioManager().setReceivingHandler(recordHandler);
 
         if (!member.getVoiceState().inVoiceChannel()) {
-            channel.sendMessage("boi get in a channel").queue();
+            EmbedBuilder eb = new EmbedBuilder();
+            eb
+                    .setTitle("Sorry")
+                    .setDescription("You need to be in a voice channel to record a call.")
+                    .setColor(Constants.VESTRIMU_PURPLE)
+                    .setFooter("Vestrimu", Constants.ICON_URL);
+            channel.sendMessage(eb.build()).queue();
             return;
         }
 

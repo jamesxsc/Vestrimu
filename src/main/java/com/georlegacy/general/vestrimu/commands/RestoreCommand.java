@@ -33,6 +33,7 @@ public class RestoreCommand extends Command {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         Guild guild = event.getGuild();
+        GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
 
         EmbedBuilder initial = new EmbedBuilder();
         initial
@@ -54,7 +55,7 @@ public class RestoreCommand extends Command {
                 .setTitle("**Bot Fix**")
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setDescription("**<a:loading:468689847935303682> Checking access role**");
-        roleExists = guild.getRoleById(sqlManager.readGuild(guild.getId()).getBotaccessroleid()) != null;
+        roleExists = guild.getRoleById(configuration.getBotaccessroleid()) != null;
 
         AtomicBoolean webhookExists = new AtomicBoolean();
         EmbedBuilder webhookCheck = new EmbedBuilder();
@@ -64,7 +65,7 @@ public class RestoreCommand extends Command {
                 .setDescription("<a:loading:468689847935303682> **Checking primary webhook**");
         guild.getWebhooks().queue(webhooks -> {
             for (Webhook webhook : webhooks) {
-                if (webhook.getId().equals(sqlManager.readGuild(guild.getId()).getPrimarywebhookid())) {
+                if (webhook.getId().equals(configuration.getPrimarywebhookid())) {
                     webhookExists.set(true);
                 }
             }
@@ -91,7 +92,6 @@ public class RestoreCommand extends Command {
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setName("Vestrimu Access")
                             .queue(role -> {
-                                GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
                                 sqlManager.writeGuild(configuration.setBotaccessroleid(role.getId()));
                             });
                 }

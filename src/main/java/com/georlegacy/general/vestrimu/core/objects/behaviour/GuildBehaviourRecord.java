@@ -1,12 +1,10 @@
 package com.georlegacy.general.vestrimu.core.objects.behaviour;
 
 import com.georlegacy.general.vestrimu.core.objects.base.JSONSerializable;
-import com.georlegacy.general.vestrimu.util.Constants;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class GuildBehaviourRecord extends JSONSerializable<GuildBehaviourRecord> {
 

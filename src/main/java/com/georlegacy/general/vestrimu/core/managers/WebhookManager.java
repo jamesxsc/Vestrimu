@@ -1,6 +1,7 @@
 package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.Vestrimu;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import net.dv8tion.jda.core.entities.*;
@@ -16,13 +17,14 @@ public class WebhookManager {
     public void loadWebhook(Guild guild) {
         if (sqlManager.isWaiting(guild) != null)
             return;
-        if (!sqlManager.readGuild(guild.getId()).isAdmin_mode())
+        GuildConfiguration configuration = sqlManager.readGuild(guild.getId());
+        if (!configuration.isAdmin_mode())
             return;
 
         guild.getWebhooks().queue(webhooks -> {
             boolean b = true;
             for (Webhook w : webhooks) {
-                if (w.getId().equals(sqlManager.readGuild(guild.getId()).getPrimarywebhookid())) {
+                if (w.getId().equals(configuration.getPrimarywebhookid())) {
                     b = false;
                 }
             }
