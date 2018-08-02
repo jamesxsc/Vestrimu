@@ -7,14 +7,16 @@ import java.util.function.Supplier;
 
 public abstract class JSONSerializable<T extends JSONSerializable> {
 
-    private final T field;
+    private transient T field;
 
-    private final Supplier<T> supplier;
+    private transient Supplier<T> supplier;
 
     protected JSONSerializable(Supplier<T> supplier) {
         this.supplier = supplier;
         this.field = this.supplier.get();
     }
+
+    protected JSONSerializable() {}
 
     public final JSONObject serialize() {
         Gson gson = new Gson();

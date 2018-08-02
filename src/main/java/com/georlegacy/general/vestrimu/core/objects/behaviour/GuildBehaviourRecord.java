@@ -1,18 +1,23 @@
 package com.georlegacy.general.vestrimu.core.objects.behaviour;
 
 import com.georlegacy.general.vestrimu.core.objects.base.JSONSerializable;
+import com.georlegacy.general.vestrimu.util.Constants;
+import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class GuildBehaviourRecord extends JSONSerializable<GuildBehaviourRecord> {
 
-    private List<MemberBehaviourRecord> memberRecords;
+    @Getter private Map<String, MemberBehaviourRecord> memberRecords;
 
-    public GuildBehaviourRecord() {
+    public GuildBehaviourRecord(boolean b) {
         super(GuildBehaviourRecord::new);
 
-        this.memberRecords = new ArrayList<MemberBehaviourRecord>();
+        this.memberRecords = new HashMap<String, MemberBehaviourRecord>();
     }
+
+    private GuildBehaviourRecord() {}
 
 }

@@ -203,7 +203,7 @@ public class SQLManager {
                     resultSet.getString("prefix"),
                     resultSet.getBoolean("admin_mode"),
                     resultSet.getBoolean("requireaccessforhelp"),
-                    new GuildBehaviourRecord().deserialize(
+                    new GuildBehaviourRecord(true).deserialize(
                             new JSONObject(resultSet.getString("guild_behaviour_record")))
             );
             return configuration;

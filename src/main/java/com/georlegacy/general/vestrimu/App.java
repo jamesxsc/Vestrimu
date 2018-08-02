@@ -6,7 +6,7 @@ public class App {
 
     public static void main(String[] args) {
         //new Vestrimu();
-        System.out.println(new GuildBehaviourRecord().serialize().toString(4));
+        System.out.println(new GuildBehaviourRecord(true).serialize().toString(4));
     }
 
 }

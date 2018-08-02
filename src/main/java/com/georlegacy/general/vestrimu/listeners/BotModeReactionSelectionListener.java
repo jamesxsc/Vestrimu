@@ -50,7 +50,7 @@ public class BotModeReactionSelectionListener extends ListenerAdapter {
                     "-",
                     false,
                     false,
-                    new GuildBehaviourRecord()
+                    new GuildBehaviourRecord(true)
             ));
         }
     }

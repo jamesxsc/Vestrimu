@@ -88,7 +88,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                                     "-",
                                     true,
                                     false,
-                                    new GuildBehaviourRecord()
+                                    new GuildBehaviourRecord(true)
                             );
                             sqlManager.writeGuild(configuration);
                         });
