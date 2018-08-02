@@ -44,7 +44,7 @@ public class GuildInfoCommand extends Command {
                 .addField("Members", "Total: " + guild.getMembers().size() + "\n" +
                         "Users: " + guild.getMembers().stream().filter(m -> !m.getUser().isBot()).toArray().length + "\n" +
                         "Bots: " + guild.getMembers().stream().filter(m -> m.getUser().isBot()).toArray().length, true)
-                .addField("MFA Level", guild.getRequiredMFALevel().name(), true)
+                .addField("Verification Level", guild.getVerificationLevel().name(), true)
                 .setThumbnail(guild.getIconUrl());
 
         channel.sendMessage(eb.build()).queue();

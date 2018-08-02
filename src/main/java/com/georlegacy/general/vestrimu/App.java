@@ -5,7 +5,7 @@ import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourReco
 public class App {
 
     public static void main(String[] args) {
-        //new Vestrimu();
+        new Vestrimu();
         System.out.println(new GuildBehaviourRecord(true).serialize().toString(4));
     }
 
