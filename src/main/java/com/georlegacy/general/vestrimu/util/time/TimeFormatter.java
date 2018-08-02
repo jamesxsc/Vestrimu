@@ -10,13 +10,13 @@ public class TimeFormatter {
 
         StringBuilder builder = new StringBuilder();
         if (days > 0)
-            builder.append(days).append(" day(s), ");
+            builder.append(days).append(" day(s)");
         if (hours > 0)
-            builder.append(hours).append(" hour(s), ");
+            builder.append(", ").append(hours).append(" hour(s)");
         if (minutes > 0)
-            builder.append(minutes).append(" minute(s), ");
+            builder.append(", ").append(minutes).append(" minute(s)");
         if (seconds > 0)
-            builder.append(seconds).append(" second(s)");
+            builder.append(", ").append(seconds).append(" second(s)");
 
         return builder.toString();
     }
