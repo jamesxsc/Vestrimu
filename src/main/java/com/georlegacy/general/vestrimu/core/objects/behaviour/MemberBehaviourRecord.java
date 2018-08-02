@@ -10,6 +10,10 @@ public class MemberBehaviourRecord extends JSONSerializable<MemberBehaviourRecor
 
     @Getter private List<Punishment> punishments;
 
+    public void addPunishment(Punishment punishment) {
+        punishments.add(punishment);
+    }
+
     public MemberBehaviourRecord(boolean b) {
         super(MemberBehaviourRecord::new);
 

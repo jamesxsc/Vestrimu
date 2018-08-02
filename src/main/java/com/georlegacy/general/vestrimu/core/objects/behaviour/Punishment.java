@@ -24,8 +24,9 @@ public class Punishment {
         this.reason = reason;
         this.durationMillis = durationMillis;
         this.issueDate = new Date();
-        this.issuer = new BehaviourIssuer(issuer.getName(), issuer.getDiscriminator(), issuer.getId().equals(Constants.VESTRIMU_ID) ?
-                BehaviourIssuer.BehaviourIssuerType.SELF : BehaviourIssuer.BehaviourIssuerType.MEMBER);
+        //this.issuer = new BehaviourIssuer(issuer.getName(), issuer.getDiscriminator(), issuer.getId().equals(Constants.VESTRIMU_ID) ?
+        //        BehaviourIssuer.BehaviourIssuerType.SELF : BehaviourIssuer.BehaviourIssuerType.MEMBER);
+        this.issuer = new BehaviourIssuer("test", "6543", BehaviourIssuer.BehaviourIssuerType.MEMBER);
     }
 
     public enum PunishmentType {
