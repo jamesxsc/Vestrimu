@@ -6,11 +6,15 @@ import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
+import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
+import com.georlegacy.general.vestrimu.core.objects.behaviour.MemberBehaviourRecord;
+import com.georlegacy.general.vestrimu.core.objects.behaviour.Punishment;
 import com.georlegacy.general.vestrimu.core.tasks.ClearTempDirectory;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.georlegacy.general.vestrimu.logging.Logger;
+import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -117,6 +121,7 @@ public class Vestrimu {
         threadpool.scheduleAtFixedRate(clearTempDirectory, 0, 45, TimeUnit.MINUTES);
 
         shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.ONLINE);
+
     }
 
     private void shutdown() {
