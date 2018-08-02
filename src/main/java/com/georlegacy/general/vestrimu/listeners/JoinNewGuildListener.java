@@ -3,7 +3,8 @@ package com.georlegacy.general.vestrimu.listeners;
 import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
-import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -86,7 +87,8 @@ public class JoinNewGuildListener extends ListenerAdapter {
                                     "TBC",
                                     "-",
                                     true,
-                                    false
+                                    false,
+                                    new GuildBehaviourRecord()
                             );
                             sqlManager.writeGuild(configuration);
                         });

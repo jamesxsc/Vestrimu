@@ -1,6 +1,5 @@
 package com.georlegacy.general.vestrimu.commands;
 
-import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
@@ -12,7 +11,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 public class GuildInfoCommand extends Command {
 
     public GuildInfoCommand() {
-        super(new String[]{"guildinfo", "gi"}, "Shows information of the current guild.", "", CommandAccessType.USER_ANY, false);
+        super(new String[]{"guildinfo", "gi", "serverinfo", "server"}, "Shows information of the current guild.", "", CommandAccessType.USER_ANY, false);
     }
 
     @Override
@@ -30,6 +29,7 @@ public class GuildInfoCommand extends Command {
                 .addField("Owner",
                         guild.getOwner().getEffectiveName() + " (" +
                         guild.getOwner().getUser().getName() +
+                        "#" +
                         guild.getOwner().getUser().getDiscriminator() + ")", true)
                 .addField("Icon URL", "[`Icon URL`](" +
                         guild.getIconUrl() +

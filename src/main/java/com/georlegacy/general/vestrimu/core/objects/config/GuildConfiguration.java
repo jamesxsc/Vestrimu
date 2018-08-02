@@ -1,5 +1,6 @@
-package com.georlegacy.general.vestrimu.core.objects;
+package com.georlegacy.general.vestrimu.core.objects.config;
 
+import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
 import lombok.Getter;
 
 public class GuildConfiguration {
@@ -21,6 +22,9 @@ public class GuildConfiguration {
 
     @Getter
     private boolean admin_mode;
+
+    @Getter
+    private String guild_behaviour_record;
 
     public GuildConfiguration setBotaccessroleid(String botaccessroleid) {
         this.botaccessroleid = botaccessroleid;
@@ -47,13 +51,22 @@ public class GuildConfiguration {
         return this;
     }
 
-    public GuildConfiguration(String id, String botaccessroleid, String primarywebhookid, String prefix, boolean admin_mode, boolean requireaccessforhelp) {
+    public GuildConfiguration setGuild_behaviour_record(String guild_behaviour_record) {
+        this.guild_behaviour_record = guild_behaviour_record;
+        return this;
+    }
+
+    public GuildConfiguration(String id, String botaccessroleid, String primarywebhookid, String prefix, boolean admin_mode, boolean requireaccessforhelp, GuildBehaviourRecord guildRecord) {
         this.id = id;
         this.botaccessroleid = botaccessroleid;
         this.primarywebhookid = primarywebhookid;
         this.prefix = prefix;
         this.requireaccessforhelp = requireaccessforhelp;
         this.admin_mode = admin_mode;
+        this.guild_behaviour_record = guildRecord.serialize().toString();
+        this.behaviourRecord = guildRecord;
     }
+
+    @Getter private transient GuildBehaviourRecord behaviourRecord;
 
 }

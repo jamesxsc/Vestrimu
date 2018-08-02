@@ -3,7 +3,7 @@ package com.georlegacy.general.vestrimu.commands;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
-import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;

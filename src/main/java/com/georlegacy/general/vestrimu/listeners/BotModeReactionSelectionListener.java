@@ -1,7 +1,8 @@
 package com.georlegacy.general.vestrimu.listeners;
 
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
-import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -48,7 +49,8 @@ public class BotModeReactionSelectionListener extends ListenerAdapter {
                     "N/A",
                     "-",
                     false,
-                    false
+                    false,
+                    new GuildBehaviourRecord()
             ));
         }
     }

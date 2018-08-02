@@ -2,10 +2,12 @@ package com.georlegacy.general.vestrimu.core.managers;
 
 import com.georlegacy.general.vestrimu.SecretConstants;
 import com.georlegacy.general.vestrimu.Vestrimu;
-import com.georlegacy.general.vestrimu.core.objects.GuildConfiguration;
+import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
+import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.google.inject.Singleton;
 import lombok.Getter;
 import net.dv8tion.jda.core.entities.Guild;
+import org.json.JSONObject;
 
 import java.sql.*;
 import java.util.concurrent.Executors;
@@ -131,7 +133,7 @@ public class SQLManager {
     }
 
     public boolean writeGuild(GuildConfiguration configuration) {
-        String query = "insert into `guilds` (id, botaccessroleid, primarywebhookid, prefix, admin_mode, requireaccessforhelp) values (?, ?, ?, ?, ?, ?)";
+        String query = "insert into `guilds` (id, botaccessroleid, primarywebhookid, prefix, admin_mode, requireaccessforhelp, guild_behaviour_record) values (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
@@ -140,6 +142,7 @@ public class SQLManager {
             preparedStatement.setString(4, configuration.getPrefix());
             preparedStatement.setBoolean(5, configuration.isAdmin_mode());
             preparedStatement.setBoolean(6, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(7, configuration.getGuild_behaviour_record());
             preparedStatement.execute();
             return true;
         } catch (SQLException e) {
@@ -161,15 +164,16 @@ public class SQLManager {
             }
             if (!in)
                 return false;
-            query = "update `guilds` set `botaccessroleid` = ?, `primarywebhookid` = ?, `admin_mode` = ?, `prefix` = ?, `requireaccessforhelp` = ? where id = ?";
+            query = "update `guilds` set `botaccessroleid` = ?, `primarywebhookid` = ?, `admin_mode` = ?, `prefix` = ?, `requireaccessforhelp` = ?, `guild_behaviour_record` = ? where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(6, configuration.getId());
+            preparedStatement.setString(7, configuration.getId());
 
             preparedStatement.setString(1, configuration.getBotaccessroleid());
             preparedStatement.setString(2, configuration.getPrimarywebhookid());
             preparedStatement.setBoolean(3, configuration.isAdmin_mode());
             preparedStatement.setString(4, configuration.getPrefix());
             preparedStatement.setBoolean(5, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(6, configuration.getGuild_behaviour_record());
             preparedStatement.executeUpdate();
             return true;
         } catch (SQLException ex) {
@@ -198,7 +202,9 @@ public class SQLManager {
                     resultSet.getString("primarywebhookid"),
                     resultSet.getString("prefix"),
                     resultSet.getBoolean("admin_mode"),
-                    resultSet.getBoolean("requireaccessforhelp")
+                    resultSet.getBoolean("requireaccessforhelp"),
+                    new GuildBehaviourRecord().deserialize(
+                            new JSONObject(resultSet.getString("guild_behaviour_record")))
             );
             return configuration;
         } catch (SQLException ex) {
