@@ -17,9 +17,11 @@ import net.dv8tion.jda.webhook.WebhookClientBuilder;
 import net.dv8tion.jda.webhook.WebhookMessageBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 public class WebhookCommand extends Command {
 
@@ -56,7 +58,8 @@ public class WebhookCommand extends Command {
                 .addField("--embedAuthorIconUrl", "The URL of the icon of the author displayed on the (optional) embedded message following the plain message", true)
                 .addField("--fieldsInline", "A boolean value denoting whether all fields in the (optional) embedded message following the plain message will be inline", true)
                 .addField("--fieldName", "The name of a field in the (optional) embedded message following the plain message, must be followed with a --fieldValue, both can be used several times", true)
-                .addField("--fieldValue", "The value of a field in the (optional) embedded message following the plain message, must follow a --fieldName", true);
+                .addField("--fieldValue", "The value of a field in the (optional) embedded message following the plain message, must follow a --fieldName", true)
+                .addField("--embedColor", "The hex color (#ffffff) for the (optional) embedded message following the plain message", true);
 
 
         if (args.size() == 0) {
@@ -112,6 +115,7 @@ public class WebhookCommand extends Command {
         String embedAuthorName = null;
         String embedAuthorIconUrl = null;
         boolean fieldsInline = true;
+        Color embedColor = null;
         HashMap</* Name */ String, /* Value */String> fields = new HashMap<String, String>();
 
         ArrayList<String> newArgs = new ArrayList<String>(Arrays.asList(String.join(" ", args).trim().split("--")));
@@ -266,6 +270,25 @@ public class WebhookCommand extends Command {
                 }
                 continue;
             }
+            if (arg.startsWith("embedColor:")) {
+                if (arg.equals("embedColor:")) {
+                    sendNoValue(arg, channel);
+                    return;
+                }
+                try {
+                    embedColor = Color.decode(arg.replaceFirst("embedColor:", "").trim());
+                } catch (IllegalArgumentException ex) {
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb
+                            .setTitle("Sorry")
+                            .setDescription("That doesn't appear to be a valid hex color value")
+                            .setColor(Constants.VESTRIMU_PURPLE)
+                            .setFooter("Vestrimu", Constants.ICON_URL);
+                    channel.sendMessage(eb.build()).queue();
+                    return;
+                }
+                continue;
+            }
 
             EmbedBuilder eb = new EmbedBuilder();
             eb
@@ -333,6 +356,7 @@ public class WebhookCommand extends Command {
         final String embedAuthorNameFinal = embedAuthorName;
         final String embedAuthorIconUrlFinal = embedAuthorIconUrl;
         final boolean fieldsInlineFinal = fieldsInline;
+        final Color embedColorFinal = embedColor;
         final HashMap<String, String> fieldsFinal = fields;
 
         event.getGuild().getWebhooks().queue(webhooks -> {
@@ -355,6 +379,8 @@ public class WebhookCommand extends Command {
                             embed.setAuthor(embedAuthorNameFinal, "https://discordapp.com", embedAuthorIconUrlFinal);
                         else
                             embed.setAuthor(embedAuthorNameFinal);
+                    if (embedColorFinal != null)
+                        embed.setColor(embedColorFinal);
                     for (Map.Entry<String, String> field : fieldsFinal.entrySet())
                         embed.addField(field.getKey(), field.getValue(), fieldsInlineFinal);
 
@@ -366,21 +392,22 @@ public class WebhookCommand extends Command {
                         builder.addEmbeds(embed.build());
 
                     try {
-                        webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal).queue();
                         if (avatarUrlFinal != null) {
                             HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
                             con.addRequestProperty("User-Agent", "Mozilla/4.76");
-                            webhook.getManager().setAvatar(avatarUrlFinal == null ? Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon.from(con.getInputStream())).queue();
+                            webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal)
+                                    .setAvatar(avatarUrlFinal == null ? Icon
+                                            .from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon
+                                            .from(con.getInputStream())).setChannel(mentioned.get(0)).queue(consumer -> {
+                                client.send(builder.build());
+                                client.close();
+                                webhook.getManager().setName("Vestrimu Primary Webhook").queue();
+                            });
                         }
-                        webhook.getManager().setChannel(mentioned.get(0)).queue(consumer -> {
-                            client.send(builder.build());
-                            client.close();
-                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    webhook.getManager().setName("Vestrimu Primary Webhook").queue();
                     try {
                         webhook.getManager().setAvatar(Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png"))).queue();
                     } catch (IOException e) {

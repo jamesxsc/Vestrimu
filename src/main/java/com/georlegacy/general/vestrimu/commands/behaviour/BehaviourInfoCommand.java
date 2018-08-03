@@ -80,7 +80,7 @@ public class BehaviourInfoCommand extends Command {
                         warning.getReason() + "*" + "\n"));
 
                 eb
-                        .addField(":mute: " + String.valueOf(warnings.size()) + " Warnings - ",
+                        .addField(":warning: " + String.valueOf(warnings.size()) + " Warnings - ",
                                 warningDetail.toString(), false);
             }
             List<Punishment> mutes = record.getPunishments().stream().filter(
@@ -92,8 +92,44 @@ public class BehaviourInfoCommand extends Command {
                         mute.getReason() + "* for *" + TimeFormatter.millisToTime(mute.getDurationMillis()) + "* \n"));
 
                 eb
-                        .addField(":warning: " + String.valueOf(mutes.size()) + " Mutes",
+                        .addField(":mute: " + String.valueOf(mutes.size()) + " Mutes",
                                 muteDetail.toString(), false);
+            }
+            List<Punishment> kicks = record.getPunishments().stream().filter(
+                    p -> p.getType().equals(Punishment.PunishmentType.KICK)).collect(Collectors.toList());
+            if (kicks.size() != 0) {
+                StringBuilder kickDetail = new StringBuilder();
+                kicks.forEach(kick -> kickDetail.append("*" + kick.getIssuer().getName() + "* kicked you on *" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(kick.getIssueDate()) + "* for *" +
+                        kick.getReason() + "*" + "\n"));
+
+                eb
+                        .addField(":<:kick:474974493593305089>: " + String.valueOf(kicks.size()) + " Kicks",
+                                kickDetail.toString(), false);
+            }
+            List<Punishment> tempbans = record.getPunishments().stream().filter(
+                    p -> p.getType().equals(Punishment.PunishmentType.TEMP_BAN)).collect(Collectors.toList());
+            if (tempbans.size() != 0) {
+                StringBuilder tempbanDetail = new StringBuilder();
+                tempbans.forEach(tempban -> tempbanDetail.append("*" + tempban.getIssuer().getName() + "* banned you on *" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(tempban.getIssueDate()) + "* for *" +
+                        tempban.getReason() + "* for *" + TimeFormatter.millisToTime(tempban.getDurationMillis()) + "* \n"));
+
+                eb
+                        .addField(":<:hammerclock:474895878897795082>: " + String.valueOf(mutes.size()) + " Temporary Bans",
+                                tempbanDetail.toString(), false);
+            }
+            List<Punishment> bans = record.getPunishments().stream().filter(
+                    p -> p.getType().equals(Punishment.PunishmentType.BAN)).collect(Collectors.toList());
+            if (bans.size() != 0) {
+                StringBuilder banDetail = new StringBuilder();
+                bans.forEach(ban -> banDetail.append("*" + ban.getIssuer().getName() + "* banned you on *" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(ban.getIssueDate()) + "* for *" +
+                        ban.getReason() + "*" + "\n"));
+
+                eb
+                        .addField(":<:hammer:474892530153029632>: " + String.valueOf(mutes.size()) + " Bans",
+                                banDetail.toString(), false);
             }
         }
 
