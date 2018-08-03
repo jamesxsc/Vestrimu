@@ -37,7 +37,7 @@ public class ClearTempDirectory implements Runnable {
     private void proccessFile(File file) {
         try {
             long currentMillis = System.currentTimeMillis();
-            
+
             BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             long creationMillis = attrs.creationTime().toMillis();
             long accessMillis = attrs.lastAccessTime().toMillis();
