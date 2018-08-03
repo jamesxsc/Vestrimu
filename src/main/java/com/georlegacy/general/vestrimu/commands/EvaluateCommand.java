@@ -60,6 +60,7 @@ public class EvaluateCommand extends Command {
         scriptEngine.put("guild", event.getGuild());
         scriptEngine.put("channel", channel);
         scriptEngine.put("author", event.getAuthor());
+        scriptEngine.put("event", event);
         scriptEngine.put("sql", new SQL());
 
         try {

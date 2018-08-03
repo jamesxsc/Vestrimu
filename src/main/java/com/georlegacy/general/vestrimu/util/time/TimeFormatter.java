@@ -12,11 +12,11 @@ public class TimeFormatter {
         if (days > 0)
             builder.append(days).append(" day(s)");
         if (hours > 0)
-            builder.append(", ").append(hours).append(" hour(s)");
+            builder.append(days > 0 ? ", " : "").append(hours).append(" hour(s)");
         if (minutes > 0)
-            builder.append(", ").append(minutes).append(" minute(s)");
+            builder.append(hours > 0 ? ", " : "").append(minutes).append(" minute(s)");
         if (seconds > 0)
-            builder.append(", ").append(seconds).append(" second(s)");
+            builder.append(minutes > 0 ? ", " : "").append(seconds).append(" second(s)");
 
         return builder.toString();
     }
