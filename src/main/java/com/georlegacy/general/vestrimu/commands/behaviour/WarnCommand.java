@@ -72,6 +72,7 @@ public class WarnCommand extends Command {
         memberRecord.addPunishment(new Punishment(Punishment.PunishmentType.WARNING,
                 reason, 0, event.getAuthor()));
         guildRecord.getMemberRecords().put(member.getUser().getId(), memberRecord);
+        sqlManager.updateGuild(configuration.setGuild_behaviour_record(guildRecord.serialize().toString()));
         EmbedBuilder eb = new EmbedBuilder();
         eb
                 .setTitle("Success")
