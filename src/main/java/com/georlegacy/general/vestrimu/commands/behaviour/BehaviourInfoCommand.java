@@ -75,9 +75,9 @@ public class BehaviourInfoCommand extends Command {
                     p -> p.getType().equals(Punishment.PunishmentType.WARNING)).collect(Collectors.toList());
             if (warnings.size() != 0) {
                 StringBuilder warningDetail = new StringBuilder();
-                warnings.forEach(warning -> warningDetail.append("*" + warning.getIssuer().getName() + "* warned you on *" +
-                        new SimpleDateFormat("dd/MM/yyyy").format(warning.getIssueDate()) + "* for *" +
-                        warning.getReason() + "*" + "\n"));
+                warnings.forEach(warning -> warningDetail.append("**" + warning.getIssuer().getName() + "** warned you on **" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(warning.getIssueDate()) + "** for **" +
+                        warning.getReason() + "**" + "\n"));
 
                 eb
                         .addField(":warning: " + String.valueOf(warnings.size()) + " Warnings - ",
@@ -87,9 +87,9 @@ public class BehaviourInfoCommand extends Command {
                     p -> p.getType().equals(Punishment.PunishmentType.MUTE)).collect(Collectors.toList());
             if (mutes.size() != 0) {
                 StringBuilder muteDetail = new StringBuilder();
-                mutes.forEach(mute -> muteDetail.append("*" + mute.getIssuer().getName() + "* muted you on *" +
-                        new SimpleDateFormat("dd/MM/yyyy").format(mute.getIssueDate()) + "* for *" +
-                        mute.getReason() + "* for *" + TimeFormatter.millisToTime(mute.getDurationMillis()) + "* \n"));
+                mutes.forEach(mute -> muteDetail.append("**" + mute.getIssuer().getName() + "** muted you on **" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(mute.getIssueDate()) + "** for **" +
+                        mute.getReason() + "** for **" + TimeFormatter.millisToTime(mute.getDurationMillis()) + "** \n"));
 
                 eb
                         .addField(":mute: " + String.valueOf(mutes.size()) + " Mutes",
@@ -99,36 +99,36 @@ public class BehaviourInfoCommand extends Command {
                     p -> p.getType().equals(Punishment.PunishmentType.KICK)).collect(Collectors.toList());
             if (kicks.size() != 0) {
                 StringBuilder kickDetail = new StringBuilder();
-                kicks.forEach(kick -> kickDetail.append("*" + kick.getIssuer().getName() + "* kicked you on *" +
-                        new SimpleDateFormat("dd/MM/yyyy").format(kick.getIssueDate()) + "* for *" +
-                        kick.getReason() + "*" + "\n"));
+                kicks.forEach(kick -> kickDetail.append("**" + kick.getIssuer().getName() + "** kicked you on **" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(kick.getIssueDate()) + "** for **" +
+                        kick.getReason() + "**" + "\n"));
 
                 eb
-                        .addField(":<:kick:474974493593305089>: " + String.valueOf(kicks.size()) + " Kicks",
+                        .addField("<:kick:474974493593305089> " + String.valueOf(kicks.size()) + " Kicks",
                                 kickDetail.toString(), false);
             }
             List<Punishment> tempbans = record.getPunishments().stream().filter(
                     p -> p.getType().equals(Punishment.PunishmentType.TEMP_BAN)).collect(Collectors.toList());
             if (tempbans.size() != 0) {
                 StringBuilder tempbanDetail = new StringBuilder();
-                tempbans.forEach(tempban -> tempbanDetail.append("*" + tempban.getIssuer().getName() + "* banned you on *" +
-                        new SimpleDateFormat("dd/MM/yyyy").format(tempban.getIssueDate()) + "* for *" +
-                        tempban.getReason() + "* for *" + TimeFormatter.millisToTime(tempban.getDurationMillis()) + "* \n"));
+                tempbans.forEach(tempban -> tempbanDetail.append("**" + tempban.getIssuer().getName() + "** banned you on **" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(tempban.getIssueDate()) + "** for **" +
+                        tempban.getReason() + "** for **" + TimeFormatter.millisToTime(tempban.getDurationMillis()) + "** \n"));
 
                 eb
-                        .addField(":<:hammerclock:474895878897795082>: " + String.valueOf(mutes.size()) + " Temporary Bans",
+                        .addField("<:hammerclock:474895878897795082> " + String.valueOf(mutes.size()) + " Temporary Bans",
                                 tempbanDetail.toString(), false);
             }
             List<Punishment> bans = record.getPunishments().stream().filter(
                     p -> p.getType().equals(Punishment.PunishmentType.BAN)).collect(Collectors.toList());
             if (bans.size() != 0) {
                 StringBuilder banDetail = new StringBuilder();
-                bans.forEach(ban -> banDetail.append("*" + ban.getIssuer().getName() + "* banned you on *" +
-                        new SimpleDateFormat("dd/MM/yyyy").format(ban.getIssueDate()) + "* for *" +
-                        ban.getReason() + "*" + "\n"));
+                bans.forEach(ban -> banDetail.append("**" + ban.getIssuer().getName() + "** banned you on **" +
+                        new SimpleDateFormat("dd/MM/yyyy").format(ban.getIssueDate()) + "** for **" +
+                        ban.getReason() + "**" + "\n"));
 
                 eb
-                        .addField(":<:hammer:474892530153029632>: " + String.valueOf(mutes.size()) + " Bans",
+                        .addField("<:hammer:474892530153029632> " + String.valueOf(mutes.size()) + " Bans",
                                 banDetail.toString(), false);
             }
         }
