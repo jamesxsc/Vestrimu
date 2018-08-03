@@ -80,7 +80,7 @@ public class BehaviourInfoCommand extends Command {
                         warning.getReason() + "*" + "\n"));
 
                 eb
-                        .addField(":mute: " + String.valueOf(warnings.size()) + " Warnings - ",
+                        .addField(":warning: " + String.valueOf(warnings.size()) + " Warnings - ",
                                 warningDetail.toString(), false);
             }
             List<Punishment> mutes = record.getPunishments().stream().filter(
@@ -92,7 +92,7 @@ public class BehaviourInfoCommand extends Command {
                         mute.getReason() + "* for *" + TimeFormatter.millisToTime(mute.getDurationMillis()) + "* \n"));
 
                 eb
-                        .addField(":warning: " + String.valueOf(mutes.size()) + " Mutes",
+                        .addField(":mute: " + String.valueOf(mutes.size()) + " Mutes",
                                 muteDetail.toString(), false);
             }
         }

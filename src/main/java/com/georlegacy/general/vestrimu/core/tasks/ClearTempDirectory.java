@@ -10,13 +10,14 @@ import java.util.Objects;
 
 public class ClearTempDirectory implements Runnable {
 
-    private static final File tmpDir = new File(File.separator + "tmp" + File.separator);
+    private static final File tmpDir = new File("tmp" + File.separator);
 
     @Override
     public void run() {
         long currentMillis = System.currentTimeMillis();
         Vestrimu.getLogger().info("Clearing disused files from temp directory");
-        for (File tmpFile : Objects.requireNonNull(tmpDir.listFiles(f -> !f.isDirectory()))) {
+        for (File tmpFile : Objects.requireNonNull(tmpDir.listFiles(file -> !file.isDirectory()))) {
+            Vestrimu.getLogger().debug("found file");
             try {
                 BasicFileAttributes attrs = Files.readAttributes(tmpFile.toPath(), BasicFileAttributes.class);
                 long creationMillis = attrs.creationTime().toMillis();
@@ -27,7 +28,6 @@ public class ClearTempDirectory implements Runnable {
                         Vestrimu.getLogger().info("Successfully deleted temp file " + tmpFile.getName());
                     else
                         Vestrimu.getLogger().info("Failed to delete temp file " + tmpFile.getName());
-
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
