@@ -2,19 +2,16 @@ package com.georlegacy.general.vestrimu;
 
 import com.georlegacy.general.vestrimu.commands.*;
 import com.georlegacy.general.vestrimu.commands.behaviour.BehaviourInfoCommand;
+import com.georlegacy.general.vestrimu.commands.behaviour.WarnCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
-import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
-import com.georlegacy.general.vestrimu.core.objects.behaviour.MemberBehaviourRecord;
-import com.georlegacy.general.vestrimu.core.objects.behaviour.Punishment;
 import com.georlegacy.general.vestrimu.core.tasks.ClearTempDirectory;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
 import com.georlegacy.general.vestrimu.logging.Logger;
-import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -58,6 +55,7 @@ public class Vestrimu {
     @Inject private RestoreCommand restoreCommand;
     @Inject private SetPrefixCommand setPrefixCommand;
     @Inject private WebhookCommand webhookCommand;
+    @Inject private WarnCommand warnCommand;
 
     @Inject private HelpCommand helpCommand;
     @Inject private GuildInfoCommand guildInfoCommand;
@@ -107,6 +105,7 @@ public class Vestrimu {
         commandManager.addCommand(restoreCommand);
         commandManager.addCommand(setPrefixCommand);
         commandManager.addCommand(webhookCommand);
+        commandManager.addCommand(warnCommand);
 
         commandManager.addCommand(helpCommand);
         commandManager.addCommand(guildInfoCommand);
@@ -118,7 +117,7 @@ public class Vestrimu {
         webhookManager.loadWebhooks();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
-        threadpool.scheduleAtFixedRate(clearTempDirectory, 0, 45, TimeUnit.MINUTES);
+        threadpool.scheduleAtFixedRate(clearTempDirectory, 1, 45, TimeUnit.MINUTES);
 
         shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.ONLINE);
 

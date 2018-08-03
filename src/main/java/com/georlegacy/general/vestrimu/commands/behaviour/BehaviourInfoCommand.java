@@ -80,7 +80,7 @@ public class BehaviourInfoCommand extends Command {
                         warning.getReason() + "**" + "\n"));
 
                 eb
-                        .addField(":warning: " + String.valueOf(warnings.size()) + " Warnings - ",
+                        .addField(":warning: " + String.valueOf(warnings.size()) + " Warnings ",
                                 warningDetail.toString(), false);
             }
             List<Punishment> mutes = record.getPunishments().stream().filter(
