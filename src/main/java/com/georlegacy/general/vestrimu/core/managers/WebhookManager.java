@@ -39,18 +39,6 @@ public class WebhookManager {
         }
     }
 
-    public void sendWebhookMessage(MessageChannel channel, String name, String avatarUrl, String message) {
-
-    }
-
-    public void sendWebhookMessage(MessageChannel channel, String name, String avatarUrl, MessageEmbed... embeds) {
-
-    }
-
-    public void sendWebhookMessage(MessageChannel channel, String name, String avatarUrl, String message, MessageEmbed... embeds) {
-
-    }
-
     private void addWebhook(Guild guild) {
         try {
             guild.getDefaultChannel().createWebhook("Vestrimu Primary Webhook").setAvatar(Icon.from(Vestrimu.getInstance().getClass().getClassLoader().getResourceAsStream("icon.png"))).queueAfter(1, TimeUnit.SECONDS, hook -> {

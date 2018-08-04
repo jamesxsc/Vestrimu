@@ -133,16 +133,17 @@ public class SQLManager {
     }
 
     public boolean writeGuild(GuildConfiguration configuration) {
-        String query = "insert into `guilds` (id, botaccessroleid, primarywebhookid, prefix, admin_mode, requireaccessforhelp, guild_behaviour_record) values (?, ?, ?, ?, ?, ?, ?)";
+        String query = "insert into `guilds` (id, botaccessroleid, botmodroleid, primarywebhookid, prefix, admin_mode, requireaccessforhelp, guild_behaviour_record) values (?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, configuration.getId());
             preparedStatement.setString(2, configuration.getBotaccessroleid());
-            preparedStatement.setString(3, configuration.getPrimarywebhookid());
-            preparedStatement.setString(4, configuration.getPrefix());
-            preparedStatement.setBoolean(5, configuration.isAdmin_mode());
-            preparedStatement.setBoolean(6, configuration.isRequireaccessforhelp());
-            preparedStatement.setString(7, configuration.getGuild_behaviour_record());
+            preparedStatement.setString(3, configuration.getBotmodroleid());
+            preparedStatement.setString(4, configuration.getPrimarywebhookid());
+            preparedStatement.setString(5, configuration.getPrefix());
+            preparedStatement.setBoolean(6, configuration.isAdmin_mode());
+            preparedStatement.setBoolean(7, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(8, configuration.getGuild_behaviour_record());
             preparedStatement.execute();
             return true;
         } catch (SQLException e) {
@@ -164,16 +165,17 @@ public class SQLManager {
             }
             if (!in)
                 return false;
-            query = "update `guilds` set `botaccessroleid` = ?, `primarywebhookid` = ?, `admin_mode` = ?, `prefix` = ?, `requireaccessforhelp` = ?, `guild_behaviour_record` = ? where id = ?";
+            query = "update `guilds` set `botaccessroleid` = ?, `botmodroleid` = ?, `primarywebhookid` = ?, `admin_mode` = ?, `prefix` = ?, `requireaccessforhelp` = ?, `guild_behaviour_record` = ? where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(7, configuration.getId());
+            preparedStatement.setString(8, configuration.getId());
 
             preparedStatement.setString(1, configuration.getBotaccessroleid());
-            preparedStatement.setString(2, configuration.getPrimarywebhookid());
-            preparedStatement.setBoolean(3, configuration.isAdmin_mode());
-            preparedStatement.setString(4, configuration.getPrefix());
-            preparedStatement.setBoolean(5, configuration.isRequireaccessforhelp());
-            preparedStatement.setString(6, configuration.getGuild_behaviour_record());
+            preparedStatement.setString(2, configuration.getBotmodroleid());
+            preparedStatement.setString(3, configuration.getPrimarywebhookid());
+            preparedStatement.setBoolean(4, configuration.isAdmin_mode());
+            preparedStatement.setString(5, configuration.getPrefix());
+            preparedStatement.setBoolean(6, configuration.isRequireaccessforhelp());
+            preparedStatement.setString(7, configuration.getGuild_behaviour_record());
             preparedStatement.executeUpdate();
             return true;
         } catch (SQLException ex) {
@@ -199,6 +201,7 @@ public class SQLManager {
             GuildConfiguration configuration = new GuildConfiguration(
                     guildId,
                     resultSet.getString("botaccessroleid"),
+                    resultSet.getString("botmodroleid"),
                     resultSet.getString("primarywebhookid"),
                     resultSet.getString("prefix"),
                     resultSet.getBoolean("admin_mode"),

@@ -24,7 +24,7 @@ public class WarnCommand extends Command {
     @Inject private SQLManager sqlManager;
 
     public WarnCommand() {
-        super(new String[]{"warn", "strike"}, "Warns a user", "<user> <reason>", CommandAccessType.SERVER_ADMIN, false);
+        super(new String[]{"warn", "strike"}, "Warns a user", "<user> <reason>", CommandAccessType.SERVER_MOD, false);
     }
 
     @Override

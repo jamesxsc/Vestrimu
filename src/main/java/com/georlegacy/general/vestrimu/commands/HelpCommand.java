@@ -9,7 +9,6 @@ import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -65,8 +64,10 @@ public class HelpCommand extends Command {
                             .setTitle("Permissions")
                             .setDescription("The current access role in ** " + event.getGuild().getName() + "** is `@" + event.getGuild().getRoleById(configuration.getBotaccessroleid()).getName() + "`.\n" +
                                     "This role can be assigned to anyone, giving them access to server administration commands.\n" +
+                                    "The proceedure is the same for the moderation role, which is currently `@" + event.getGuild().getRoleById(configuration.getBotmodroleid()).getName() + "`\n" +
                                     ":no_entry: - Commands only for super admins\n" +
                                     ":warning: - Commands only for server admins\n" +
+                                    ":regional_indicator_m: - Command only for server moderators" +
                                     ":eight_pointed_black_star: - Commands for any user")
                             .build()
             );
@@ -78,6 +79,7 @@ public class HelpCommand extends Command {
                             .setDescription("This server is not in admin mode so only the server owner can perform restricted commands.\n \n" +
                                     ":no_entry: - Commands only for super admins\n" +
                                     ":warning: - Commands only for server admins\n" +
+                                    ":regional_indicator_m: - Command only for server moderators" +
                                     ":eight_pointed_black_star: - Commands for any user")
                             .build()
             );
@@ -92,8 +94,10 @@ public class HelpCommand extends Command {
                 continue;
             if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) && (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() ? !(event.getMember().getRoles().contains(event.getGuild().getRoleById(sqlManager.readGuild(event.getGuild().getId()).getBotaccessroleid()))) : !(event.getMember().isOwner())))
                 continue;
+            if (command.getAccessType().equals(CommandAccessType.SERVER_MOD) && (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() ? !(event.getMember().getRoles().contains(event.getGuild().getRoleById(sqlManager.readGuild(event.getGuild().getId()).getBotmodroleid()))) : !(event.getMember().isOwner())))
+                continue;
             commands.addField(
-                    (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " : command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " : ":eight_pointed_black_star: ") +
+                    (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " : command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " : command.getAccessType().equals(CommandAccessType.SERVER_MOD) ? ":regiona_indicator_m: " : ":eight_pointed_black_star: ") +
                             configuration.getPrefix() +
                             String.join("|", command.getNames()),
                     command.getDescription() +
@@ -114,7 +118,6 @@ public class HelpCommand extends Command {
         );
 
         helps.forEach(msg -> message.getAuthor().openPrivateChannel().queue(dm -> dm.sendMessage(msg).queue()));
-
 
     }
 

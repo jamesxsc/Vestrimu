@@ -47,6 +47,7 @@ public class BotModeReactionSelectionListener extends ListenerAdapter {
                     guildId,
                     "N/A",
                     "N/A",
+                    "N/A",
                     "-",
                     false,
                     false,

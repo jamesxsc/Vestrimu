@@ -1,6 +1,5 @@
 package com.georlegacy.general.vestrimu.listeners;
 
-import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
 import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourRecord;
@@ -54,8 +53,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setFooter("Vestrimu", Constants.ICON_URL)
                             .setDescription("I'm **Vestrimu**. *I've been here before.*")
-                            .addField("Help", "If you need help getting started, ping me in any channel.", true)
-                            .addField("My Creator", "I was built by 615283.", true);
+                            .addField("Help", "If you need help getting started, ping me in any channel.", true);
                     guild.getDefaultChannel().sendMessage(eb.build()).queue();
                     if (guild.getRoleById(configuration.getBotaccessroleid()) == null) {
                         guild.getController().createRole()
@@ -74,23 +72,28 @@ public class JoinNewGuildListener extends ListenerAdapter {
                         .setColor(Constants.VESTRIMU_PURPLE)
                         .setFooter("Vestrimu", Constants.ICON_URL)
                         .setDescription("I'm **Vestrimu**, your new server administration bot!")
-                        .addField("Help", "If you need help getting started, ping me in any channel.", true)
-                        .addField("My Creator", "I was built by 615283.", true);
+                        .addField("Help", "If you need help getting started, ping me in any channel.", true);
                 guild.getDefaultChannel().sendMessage(eb.build()).queue();
                 guild.getController().createRole()
                         .setColor(Constants.VESTRIMU_PURPLE)
                         .setName("Vestrimu Access")
                         .queue(role -> {
-                            GuildConfiguration configuration = new GuildConfiguration(
-                                    guild.getId(),
-                                    role.getId(),
-                                    "TBC",
-                                    "-",
-                                    true,
-                                    false,
-                                    new GuildBehaviourRecord(true)
-                            );
-                            sqlManager.writeGuild(configuration);
+                            guild.getController().createRole()
+                                    .setColor(Constants.VESTRIMU_PURPLE)
+                                    .setName("Vestrimu Moderator")
+                                    .queue(role2 -> {
+                                        GuildConfiguration configuration = new GuildConfiguration(
+                                                guild.getId(),
+                                                role.getId(),
+                                                role2.getId(),
+                                                "TBC",
+                                                "-",
+                                                true,
+                                                false,
+                                                new GuildBehaviourRecord(true)
+                                        );
+                                        sqlManager.writeGuild(configuration);
+                                    });
                         });
                 webhookManager.loadWebhook(guild);
 

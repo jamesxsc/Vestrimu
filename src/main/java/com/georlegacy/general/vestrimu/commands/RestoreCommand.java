@@ -57,6 +57,14 @@ public class RestoreCommand extends Command {
                 .setDescription("**<a:loading:468689847935303682> Checking access role**");
         roleExists = guild.getRoleById(configuration.getBotaccessroleid()) != null;
 
+        boolean modRoleExists;
+        EmbedBuilder modRoleCheck = new EmbedBuilder();
+        modRoleCheck
+                .setTitle("**Bot Fix**")
+                .setColor(Constants.VESTRIMU_PURPLE)
+                .setDescription("**<a:loading:468689847935303682> Checking moderator role role**");
+        modRoleExists = guild.getRoleById(configuration.getBotmodroleid()) != null;
+
         AtomicBoolean webhookExists = new AtomicBoolean();
         EmbedBuilder webhookCheck = new EmbedBuilder();
         webhookCheck
@@ -95,6 +103,15 @@ public class RestoreCommand extends Command {
                                 sqlManager.writeGuild(configuration.setBotaccessroleid(role.getId()));
                             });
                 }
+                if (!modRoleExists) {
+                    finish.addField("Moderator Role", "The bot's moderator role has successfully been repaired", true);
+                    guild.getController().createRole()
+                            .setColor(Constants.VESTRIMU_PURPLE)
+                            .setName("Vestrimu Moderator")
+                            .queue(role -> {
+                                sqlManager.writeGuild(configuration.setBotmodroleid(role.getId()));
+                            });
+                }
                 if (!webhookExists.get()) {
                     finish.addField("Primary Webhook", ":white_check_mark: The bot's primary webhook has successfully been repaired", true);
                     webhookManager.loadWebhook(guild);
@@ -104,10 +121,11 @@ public class RestoreCommand extends Command {
             channel.sendMessage(initial.build()).queue(message1 -> {
                 message1.editMessage(permissionCheck.build()).queueAfter(1, TimeUnit.SECONDS);
                 message1.editMessage(roleCheck.build()).queueAfter(2, TimeUnit.SECONDS);
-                message1.editMessage(webhookCheck.build()).queueAfter(3, TimeUnit.SECONDS);
-                message1.editMessage(summary.build()).queueAfter(4, TimeUnit.SECONDS);
-                if (!hasPermissions || !roleExists || !webhookExists.get()) {
-                    message1.editMessage(finish.build()).queueAfter(5, TimeUnit.SECONDS);
+                message1.editMessage(modRoleCheck.build()).queueAfter(3, TimeUnit.SECONDS);
+                message1.editMessage(webhookCheck.build()).queueAfter(4, TimeUnit.SECONDS);
+                message1.editMessage(summary.build()).queueAfter(5, TimeUnit.SECONDS);
+                if (!hasPermissions || !roleExists || !webhookExists.get() || !modRoleExists) {
+                    message1.editMessage(finish.build()).queueAfter(6, TimeUnit.SECONDS);
                 }
             });
         });

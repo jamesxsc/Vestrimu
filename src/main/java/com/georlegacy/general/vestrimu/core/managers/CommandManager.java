@@ -114,6 +114,36 @@ public class CommandManager extends ListenerAdapter {
                                 return;
                             }
                         }
+                    } else if (command.getAccessType().equals(CommandAccessType.SERVER_MOD)) {
+                        if (sqlManager.readGuild(guild.getId()).isAdmin_mode()) {
+                            if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotmodroleid()))) {
+                                command.run(event);
+                                return;
+                            } else {
+                                EmbedBuilder eb = new EmbedBuilder();
+                                eb
+                                        .setTitle("Sorry")
+                                        .setDescription("That command can only be used by server moderators")
+                                        .setColor(Constants.VESTRIMU_PURPLE)
+                                        .setFooter("Vestrimu", Constants.ICON_URL);
+                                channel.sendMessage(eb.build()).queue();
+                                return;
+                            }
+                        } else {
+                            if (event.getMember().equals(guild.getOwner())) {
+                                command.run(event);
+                                return;
+                            } else {
+                                EmbedBuilder eb = new EmbedBuilder();
+                                eb
+                                        .setTitle("Sorry")
+                                        .setDescription("That command can only be used by the server owner")
+                                        .setColor(Constants.VESTRIMU_PURPLE)
+                                        .setFooter("Vestrimu", Constants.ICON_URL);
+                                channel.sendMessage(eb.build()).queue();
+                                return;
+                            }
+                        }
                     }
                     command.run(event);
                 }

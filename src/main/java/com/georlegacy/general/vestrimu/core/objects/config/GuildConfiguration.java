@@ -12,6 +12,9 @@ public class GuildConfiguration {
     private String botaccessroleid;
 
     @Getter
+    private String botmodroleid;
+
+    @Getter
     private String primarywebhookid;
 
     @Getter
@@ -28,6 +31,11 @@ public class GuildConfiguration {
 
     public GuildConfiguration setBotaccessroleid(String botaccessroleid) {
         this.botaccessroleid = botaccessroleid;
+        return this;
+    }
+
+    public GuildConfiguration setBotmodroleid(String botmodroleid) {
+        this.botmodroleid = botmodroleid;
         return this;
     }
 
@@ -56,9 +64,10 @@ public class GuildConfiguration {
         return this;
     }
 
-    public GuildConfiguration(String id, String botaccessroleid, String primarywebhookid, String prefix, boolean admin_mode, boolean requireaccessforhelp, GuildBehaviourRecord guildRecord) {
+    public GuildConfiguration(String id, String botaccessroleid, String botmodroleid, String primarywebhookid, String prefix, boolean admin_mode, boolean requireaccessforhelp, GuildBehaviourRecord guildRecord) {
         this.id = id;
         this.botaccessroleid = botaccessroleid;
+        this.botmodroleid = botmodroleid;
         this.primarywebhookid = primarywebhookid;
         this.prefix = prefix;
         this.requireaccessforhelp = requireaccessforhelp;
