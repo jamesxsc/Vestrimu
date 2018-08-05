@@ -54,6 +54,17 @@ public class PurgeCommand extends Command {
             return;
         }
 
+        if (toRemove > 100 || toRemove < 0) {
+            EmbedBuilder eb = new EmbedBuilder();
+            eb
+                    .setTitle("Sorry")
+                    .setDescription("I can only purge up to 100 messages at a time.")
+                    .setColor(Constants.VESTRIMU_PURPLE)
+                    .setFooter("Vestrimu", Constants.ICON_URL);
+            channel.sendMessage(eb.build()).queue();
+            return;
+        }
+
         if (args.size() == 1 || (!args.get(1).equalsIgnoreCase("bot") &&
                 !args.get(1).equalsIgnoreCase("user") &&
                 !args.get(1).equalsIgnoreCase("webhook"))) {
@@ -67,8 +78,7 @@ public class PurgeCommand extends Command {
             channel.sendMessage(eb.build()).queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
         } else {
             if (args.get(1).equalsIgnoreCase("bot")) {
-                Vestrimu.getLogger().debug("in the bot if");
-                channel.getHistory().retrievePast(500).queue(msgs -> {
+                channel.getHistory().retrievePast(100).queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> m.getAuthor().isBot()).toArray()) {
                         if (i != 0) {
@@ -87,7 +97,7 @@ public class PurgeCommand extends Command {
                 return;
             }
             if (args.get(1).equalsIgnoreCase("user")) {
-                channel.getHistory().retrievePast(500).queue(msgs -> {
+                channel.getHistory().retrievePast(100).queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> !m.getAuthor().isBot()).toArray()) {
                         if (i != 0) {
@@ -106,7 +116,7 @@ public class PurgeCommand extends Command {
                 return;
             }
             if (args.get(1).equalsIgnoreCase("webhook")) {
-                channel.getHistory().retrievePast(500).queue(msgs -> {
+                channel.getHistory().retrievePast(100).queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> m.isWebhookMessage()).toArray()) {
                         if (i != 0) {
