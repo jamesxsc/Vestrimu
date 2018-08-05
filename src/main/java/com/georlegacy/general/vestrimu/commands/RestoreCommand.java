@@ -62,7 +62,7 @@ public class RestoreCommand extends Command {
         modRoleCheck
                 .setTitle("**Bot Fix**")
                 .setColor(Constants.VESTRIMU_PURPLE)
-                .setDescription("**<a:loading:468689847935303682> Checking moderator role role**");
+                .setDescription("**<a:loading:468689847935303682> Checking moderator role**");
         modRoleExists = guild.getRoleById(configuration.getBotmodroleid()) != null;
 
         AtomicBoolean webhookExists = new AtomicBoolean();
@@ -84,6 +84,7 @@ public class RestoreCommand extends Command {
                     .setDescription(hasPermissions && roleExists && webhookExists.get() ? "**Analysis complete with no issues**" : "**Analysis complete with issues**")
                     .addField("Permissions", (hasPermissions ? ":white_check_mark: " : ":x: ") + (hasPermissions ? "The bot has the correct permissions to run normally" : "The bot does not have the correct permissions, try rerunning this command after giving the bot administrator privileges"), true)
                     .addField("Access Role", (roleExists ? ":white_check_mark: " : ":x: ") + (roleExists ? "The bot's access role is intact as expected" : "The bot's access role has been deleted and potentially unsuccessfully recreated, this will be fixed shortly"), true)
+                    .addField("Moderator Role", (modRoleExists ? ":white_check_mark: " : ":x: ") + (modRoleExists ? "The bot's moderator role is intact as expected" : "The bot's moderator role has been deleted and potentially unsuccessfully recreated, this will be fixed shortly"), true)
                     .addField("Primary Webhook", (webhookExists.get() ? ":white_check_mark: " : ":x: ") + (webhookExists.get() ? "The bot's primary webhook is intact as expected" : "The bot's primary webhook has been deleted and potentially unsuccessfully recreated, this will be fixed shortly"), true);
 
             EmbedBuilder finish = new EmbedBuilder();
@@ -95,21 +96,21 @@ public class RestoreCommand extends Command {
 
                 finish.addField("Permissions", ":white_check_mark: The bot had the correct permissions to fix issues", true);
                 if (!roleExists) {
-                    finish.addField("Access Role", "The bot's access role has successfully been repaired", true);
+                    finish.addField("Access Role", ":white_check_mark: The bot's access role has successfully been repaired", true);
                     guild.getController().createRole()
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setName("Vestrimu Access")
                             .queue(role -> {
-                                sqlManager.writeGuild(configuration.setBotaccessroleid(role.getId()));
+                                sqlManager.updateGuild(configuration.setBotaccessroleid(role.getId()));
                             });
                 }
                 if (!modRoleExists) {
-                    finish.addField("Moderator Role", "The bot's moderator role has successfully been repaired", true);
+                    finish.addField("Moderator Role", ":white_check_mark: The bot's moderator role has successfully been repaired", true);
                     guild.getController().createRole()
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setName("Vestrimu Moderator")
                             .queue(role -> {
-                                sqlManager.writeGuild(configuration.setBotmodroleid(role.getId()));
+                                sqlManager.updateGuild(configuration.setBotmodroleid(role.getId()));
                             });
                 }
                 if (!webhookExists.get()) {

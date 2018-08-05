@@ -70,6 +70,14 @@ public class CommandManager extends ListenerAdapter {
                         channel.sendMessage(eb.build()).queue();
                         return;
                     }
+                    if (Constants.ADMIN_IDS.contains(event.getAuthor().getId())) {
+                        command.run(event);
+                        return;
+                    }
+                    if (event.getMember().equals(guild.getOwner())) {
+                        command.run(event);
+                        return;
+                    }
                     if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN)) {
                         if (Constants.ADMIN_IDS.contains(event.getAuthor().getId())) {
                             command.run(event);
