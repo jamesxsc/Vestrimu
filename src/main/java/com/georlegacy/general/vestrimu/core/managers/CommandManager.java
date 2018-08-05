@@ -124,7 +124,7 @@ public class CommandManager extends ListenerAdapter {
                         }
                     } else if (command.getAccessType().equals(CommandAccessType.SERVER_MOD)) {
                         if (sqlManager.readGuild(guild.getId()).isAdmin_mode()) {
-                            if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotmodroleid()))) {
+                            if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotmodroleid())) && event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotaccessroleid()))) {
                                 command.run(event);
                                 return;
                             } else {

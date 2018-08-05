@@ -1,6 +1,18 @@
 package com.georlegacy.general.vestrimu;
 
-import com.georlegacy.general.vestrimu.commands.*;
+import com.georlegacy.general.vestrimu.commands.AccessRequiredForHelpToggleCommand;
+import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
+import com.georlegacy.general.vestrimu.commands.GuildInfoCommand;
+import com.georlegacy.general.vestrimu.commands.HelpCommand;
+import com.georlegacy.general.vestrimu.commands.PurgeCommand;
+import com.georlegacy.general.vestrimu.commands.RecordCommand;
+import com.georlegacy.general.vestrimu.commands.RestoreCommand;
+import com.georlegacy.general.vestrimu.commands.SetPrefixCommand;
+import com.georlegacy.general.vestrimu.commands.StatsCommand;
+import com.georlegacy.general.vestrimu.commands.StopCommand;
+import com.georlegacy.general.vestrimu.commands.TranslateCommand;
+import com.georlegacy.general.vestrimu.commands.UserInfoCommand;
+import com.georlegacy.general.vestrimu.commands.WebhookCommand;
 import com.georlegacy.general.vestrimu.commands.behaviour.BehaviourInfoCommand;
 import com.georlegacy.general.vestrimu.commands.behaviour.WarnCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
@@ -32,42 +44,72 @@ import java.util.concurrent.TimeUnit;
 public class Vestrimu {
 
     // Managers
-    @Getter @Inject private CommandManager commandManager;
-    @Inject private WebhookManager webhookManager;
-    @Getter @Inject private SQLManager sqlManager;
+    @Getter
+    @Inject
+    private CommandManager commandManager;
+    @Inject
+    private WebhookManager webhookManager;
+    @Getter
+    @Inject
+    private SQLManager sqlManager;
 
     // Listeners
-    @Getter private EventWaiter eventWaiter;
+    @Getter
+    private EventWaiter eventWaiter;
 
-    @Inject private BotMentionListener botMentionListener;
-    @Inject private BotModeReactionSelectionListener botModeReactionSelectionListener;
-    @Inject private JoinNewGuildListener joinNewGuildListener;
+    @Inject
+    private BotMentionListener botMentionListener;
+    @Inject
+    private BotModeReactionSelectionListener botModeReactionSelectionListener;
+    @Inject
+    private JoinNewGuildListener joinNewGuildListener;
 
     // Tasks
-    @Inject private ClearTempDirectory clearTempDirectory;
+    @Inject
+    private ClearTempDirectory clearTempDirectory;
 
     // Commands
-    @Inject private EvaluateCommand evaluateCommand;
-    @Inject private StopCommand stopCommand;
-    @Inject private RecordCommand recordCommand;
+    @Inject
+    private EvaluateCommand evaluateCommand;
+    @Inject
+    private StopCommand stopCommand;
+    @Inject
+    private RecordCommand recordCommand;
 
-    @Inject private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
-    @Inject private RestoreCommand restoreCommand;
-    @Inject private SetPrefixCommand setPrefixCommand;
-    @Inject private WebhookCommand webhookCommand;
-    @Inject private WarnCommand warnCommand;
+    @Inject
+    private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
+    @Inject
+    private RestoreCommand restoreCommand;
+    @Inject
+    private SetPrefixCommand setPrefixCommand;
+    @Inject
+    private WebhookCommand webhookCommand;
 
-    @Inject private HelpCommand helpCommand;
-    @Inject private GuildInfoCommand guildInfoCommand;
-    @Inject private StatsCommand statsCommand;
-    @Inject private TranslateCommand translateCommand;
-    @Inject private UserInfoCommand userInfoCommand;
-    @Inject private BehaviourInfoCommand behaviourInfoCommand;
+    @Inject
+    private WarnCommand warnCommand;
+    @Inject
+    private PurgeCommand purgeCommand;
 
-    @Getter private ShardManager shardManager;
-    @Getter private ScheduledExecutorService threadpool;
+    @Inject
+    private HelpCommand helpCommand;
+    @Inject
+    private GuildInfoCommand guildInfoCommand;
+    @Inject
+    private StatsCommand statsCommand;
+    @Inject
+    private TranslateCommand translateCommand;
+    @Inject
+    private UserInfoCommand userInfoCommand;
+    @Inject
+    private BehaviourInfoCommand behaviourInfoCommand;
 
-    @Getter private final long startupTime;
+    @Getter
+    private ShardManager shardManager;
+    @Getter
+    private ScheduledExecutorService threadpool;
+
+    @Getter
+    private final long startupTime;
 
     private static Logger logger;
     private static Vestrimu instance;
@@ -105,7 +147,9 @@ public class Vestrimu {
         commandManager.addCommand(restoreCommand);
         commandManager.addCommand(setPrefixCommand);
         commandManager.addCommand(webhookCommand);
+
         commandManager.addCommand(warnCommand);
+        commandManager.addCommand(purgeCommand);
 
         commandManager.addCommand(helpCommand);
         commandManager.addCommand(guildInfoCommand);
