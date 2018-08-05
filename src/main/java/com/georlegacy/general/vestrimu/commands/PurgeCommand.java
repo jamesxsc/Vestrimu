@@ -28,6 +28,17 @@ public class PurgeCommand extends Command {
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
         args.remove(0);
 
+        if (args.isEmpty()) {
+            EmbedBuilder eb = new EmbedBuilder();
+            eb
+                    .setTitle("Sorry")
+                    .setDescription("You need to provide a number of messages to purge")
+                    .setColor(Constants.VESTRIMU_PURPLE)
+                    .setFooter("Vestrimu", Constants.ICON_URL);
+            channel.sendMessage(eb.build()).queue();
+            return;
+        }
+
         int toRemove;
         try {
             toRemove = Integer.parseInt(args.get(0));
