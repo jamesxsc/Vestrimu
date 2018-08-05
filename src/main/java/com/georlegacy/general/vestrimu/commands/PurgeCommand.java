@@ -60,12 +60,12 @@ public class PurgeCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setTitle("Success")
-                    .setDescription(toRemove + "messages has been deleted from this channel.")
+                    .setDescription(toRemove + " messages has been deleted from this channel.")
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
         } else {
-            if (args.get(0).equalsIgnoreCase("bot")) {
+            if (args.get(1).equalsIgnoreCase("bot")) {
                 channel.getIterableHistory().queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> m.getAuthor().isBot()).toArray()) {
@@ -84,7 +84,7 @@ public class PurgeCommand extends Command {
                 channel.sendMessage(eb.build()).queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
                 return;
             }
-            if (args.get(0).equalsIgnoreCase("user")) {
+            if (args.get(1).equalsIgnoreCase("user")) {
                 channel.getIterableHistory().queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> !m.getAuthor().isBot()).toArray()) {
@@ -103,7 +103,7 @@ public class PurgeCommand extends Command {
                 channel.sendMessage(eb.build()).queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
                 return;
             }
-            if (args.get(0).equalsIgnoreCase("webhook")) {
+            if (args.get(1).equalsIgnoreCase("webhook")) {
                 channel.getIterableHistory().queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> m.isWebhookMessage()).toArray()) {
