@@ -1,5 +1,6 @@
 package com.georlegacy.general.vestrimu.commands;
 
+import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
@@ -60,13 +61,14 @@ public class PurgeCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setTitle("Success")
-                    .setDescription(toRemove + " messages has been deleted from this channel.")
+                    .setDescription(toRemove + " messages have been deleted from this channel.")
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
         } else {
             if (args.get(1).equalsIgnoreCase("bot")) {
-                channel.getIterableHistory().queue(msgs -> {
+                Vestrimu.getLogger().debug("in the bot if");
+                channel.getHistory().retrievePast(500).queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> m.getAuthor().isBot()).toArray()) {
                         if (i != 0) {
@@ -85,7 +87,7 @@ public class PurgeCommand extends Command {
                 return;
             }
             if (args.get(1).equalsIgnoreCase("user")) {
-                channel.getIterableHistory().queue(msgs -> {
+                channel.getHistory().retrievePast(500).queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> !m.getAuthor().isBot()).toArray()) {
                         if (i != 0) {
@@ -104,7 +106,7 @@ public class PurgeCommand extends Command {
                 return;
             }
             if (args.get(1).equalsIgnoreCase("webhook")) {
-                channel.getIterableHistory().queue(msgs -> {
+                channel.getHistory().retrievePast(500).queue(msgs -> {
                     int i = toRemove;
                     for (Object m : msgs.stream().filter(m -> m.isWebhookMessage()).toArray()) {
                         if (i != 0) {
