@@ -407,8 +407,9 @@ public class WebhookCommand extends Command {
                                             .from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon
                                             .from(con.getInputStream())).setChannel(mentioned.get(0)).queue(consumer -> {
                                 client.send(builder.build());
-                                client.close();
-                                webhook.getManager().setName("Vestrimu Primary Webhook").queue();
+                                webhook.getManager().setName("Vestrimu Primary Webhook").queue(
+                                        w -> client.close()
+                                );
                             });
                         }
                     } catch (IOException e) {
