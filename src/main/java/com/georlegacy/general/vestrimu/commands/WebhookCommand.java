@@ -1,6 +1,7 @@
 package com.georlegacy.general.vestrimu.commands;
 
 import com.georlegacy.general.vestrimu.App;
+import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
@@ -38,6 +39,8 @@ public class WebhookCommand extends Command {
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));
         GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
         args.remove(0);
+
+        Vestrimu.getLogger().debug("executing");
 
         EmbedBuilder argumentsHelp = new EmbedBuilder();
         argumentsHelp
@@ -300,6 +303,8 @@ public class WebhookCommand extends Command {
             return;
         }
 
+        Vestrimu.getLogger().debug("variables set");
+
         if (currentFieldName != null) {
             EmbedBuilder eb = new EmbedBuilder();
             eb
@@ -363,6 +368,7 @@ public class WebhookCommand extends Command {
             Optional<Webhook> optionalWebhook = webhooks.stream().filter(webhook -> webhook.getId().equals(configuration.getPrimarywebhookid())).findFirst();
             if (optionalWebhook.isPresent()) {
                 optionalWebhook.ifPresent(webhook -> {
+                    Vestrimu.getLogger().debug("webhook is presence");
                     EmbedBuilder embed = new EmbedBuilder();
                     if (embedTitleFinal != null)
                         embed.setTitle(embedTitleFinal);
@@ -393,6 +399,7 @@ public class WebhookCommand extends Command {
 
                     try {
                         if (avatarUrlFinal != null) {
+                            Vestrimu.getLogger().debug("final send");
                             HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
                             con.addRequestProperty("User-Agent", "Mozilla/4.76");
                             webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal)
