@@ -40,8 +40,6 @@ public class WebhookCommand extends Command {
         GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
         args.remove(0);
 
-        Vestrimu.getLogger().debug("executing");
-
         EmbedBuilder argumentsHelp = new EmbedBuilder();
         argumentsHelp
                 .setTitle("Arguments")
@@ -368,7 +366,6 @@ public class WebhookCommand extends Command {
             Optional<Webhook> optionalWebhook = webhooks.stream().filter(webhook -> webhook.getId().equals(configuration.getPrimarywebhookid())).findFirst();
             if (optionalWebhook.isPresent()) {
                 optionalWebhook.ifPresent(webhook -> {
-                    Vestrimu.getLogger().debug("webhook is presence");
                     EmbedBuilder embed = new EmbedBuilder();
                     if (embedTitleFinal != null)
                         embed.setTitle(embedTitleFinal);
@@ -399,7 +396,6 @@ public class WebhookCommand extends Command {
 
                     try {
                         if (avatarUrlFinal != null) {
-                            Vestrimu.getLogger().debug("final send");
                             HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
                             con.addRequestProperty("User-Agent", "Mozilla/4.76");
                             webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal)
@@ -407,9 +403,7 @@ public class WebhookCommand extends Command {
                                             .from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon
                                             .from(con.getInputStream())).setChannel(mentioned.get(0)).queue(consumer -> {
                                 client.send(builder.build());
-                                webhook.getManager().setName("Vestrimu Primary Webhook").queue(
-                                        w -> client.close()
-                                );
+                                webhook.getManager().setName("Vestrimu Primary Webhook").queue();
                             });
                         }
                     } catch (IOException e) {

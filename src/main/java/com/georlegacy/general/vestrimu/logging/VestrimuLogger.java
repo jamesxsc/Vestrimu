@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.logging.Level;
 
-public class Logger {
+public class VestrimuLogger {
 
     @Getter @Setter private boolean error;
     @Getter @Setter private boolean trace;
@@ -24,11 +24,11 @@ public class Logger {
     @Getter private String latestLogToConsole;
     @Getter private String latestLogToDiscord;
 
-    public Logger(boolean error, boolean trace,
-                  boolean warn, boolean debug,
-                  boolean info, boolean fine,
-                  boolean doConsole, boolean doDiscord,
-                  String discordChannelId) {
+    public VestrimuLogger(boolean error, boolean trace,
+                          boolean warn, boolean debug,
+                          boolean info, boolean fine,
+                          boolean doConsole, boolean doDiscord,
+                          String discordChannelId) {
         this.error = error;
         this.trace = trace;
         this.warn = warn;
@@ -42,11 +42,11 @@ public class Logger {
         this.discordChannelId = discordChannelId;
     }
 
-    public Logger() {
+    public VestrimuLogger() {
         this(true, true, true, false, true, true, true, false, null);
     }
 
-    public Logger(boolean debug, String discordChannelId) {
+    public VestrimuLogger(boolean debug, String discordChannelId) {
         this(true, true, true, debug, true, true, true, true, discordChannelId);
     }
 

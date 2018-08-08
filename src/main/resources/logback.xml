@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[ {HH:mm:ss} [%thread] [%-5level]] %msg%n%ex{full}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+        <webhookUri>https://discordapp.com/api/webhooks/476082608225124390/b-lQxTKiyusQLGy2_yQsK122jYd2zSskLeRRM39bAEIMtynu0WAw_ItY5ciwv7aB9pt9</webhookUri>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d```[ {HH:mm:ss} [%thread] [%-5level]] %msg%n%ex{full}```</pattern>
+        </layout>
+        <username>Discurd</username>
+        <avatarUrl>http://i.imgur.com/UoiA3OQ.png</avatarUrl>
+        <tts>false</tts>
+    </appender>
+
+    <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="DISCORD" />
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <logger name="com.georlegacy.general.vestrimu.Vestrimu" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_DISCORD"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_DISCORD"/>
+    </root>
+
+</configuration>

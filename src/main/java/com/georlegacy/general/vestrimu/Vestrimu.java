@@ -23,7 +23,7 @@ import com.georlegacy.general.vestrimu.core.tasks.ClearTempDirectory;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
 import com.georlegacy.general.vestrimu.listeners.JoinNewGuildListener;
-import com.georlegacy.general.vestrimu.logging.Logger;
+import com.georlegacy.general.vestrimu.logging.VestrimuLogger;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -33,6 +33,8 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
@@ -126,7 +128,11 @@ public class Vestrimu {
         startupTime = System.currentTimeMillis();
 
         instance = this;
-        logger = new Logger(true, "474249899756486676");
+        logger = LoggerFactory.getLogger(getClass());
+
+        getLogger().info("info");
+        getLogger().warn("warn");
+        getLogger().error("error");
 
         BinderModule module = new BinderModule(this.getClass());
         Injector injector = module.createInjector();
