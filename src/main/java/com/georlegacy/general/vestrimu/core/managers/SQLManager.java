@@ -24,7 +24,7 @@ public class SQLManager {
         try {
             Vestrimu.getLogger().info("Loading SQL Manager...");
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu?autoReconnect=true", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
+            connection = DriverManager.getConnection("jdbc:mysql://10.0.0.105/vestrimu?autoReconnect=true", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
             statement = connection.createStatement();
             Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
                 try {

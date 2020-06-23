@@ -79,91 +79,64 @@ public class RecordCommand extends Command {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
         Vestrimu.getInstance().getEventWaiter().waitForEvent(GuildVoiceLeaveEvent.class, e ->
-                e.getMember().equals(member) &&
+                        e.getMember().equals(member) &&
                         e.getChannelLeft().equals(voiceChannel),
                 e -> {
-                    EmbedBuilder end = new EmbedBuilder();
-                    end
-                            .setColor(Constants.VESTRIMU_PURPLE)
-                            .setTitle("<a:loading:468689847935303682> Your audio is being processed.");
-                    channel.sendMessage(end.build()).queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
-
-                    executorService.shutdownNow();
-                    guild.getAudioManager().closeAudioConnection();
-
-                    File wavFile = new File("tmp" + File.separator + "recordings" + File.separator + uuid.toString() + ".wav");
-                    try {
-                        FileInputStream pcmInputStream = new FileInputStream(file);
-                        FileOutputStream wavOutputStream = new FileOutputStream(wavFile);
-                        byte[] pcmBytes = IOUtils.toByteArray(pcmInputStream);
-                        AudioSystem.write(new AudioInputStream(new ByteArrayInputStream(pcmBytes),
-                                        new AudioFormat(48000, 16, 2, true,
-                                                true), pcmBytes.length / 4),
-                                AudioFileFormat.Type.WAVE, wavOutputStream);
-                        wavOutputStream.flush();
-                        wavOutputStream.close();
-                        pcmInputStream.close();
-                        fileOutputStream.close();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                    List<File> toSends = AudioUtil.compress(wavFile, uuid.toString());
-                    int iter = 1;
-                    for (File toSend : toSends)
-                        channel.sendFile(toSend, "Vestrimu Call Recording Part " + iter++ + ".mp3").queue();
+                    endCall(channel, guild, uuid, file, fileOutputStream, executorService);
                 },
                 60,
                 TimeUnit.MINUTES,
                 () -> {
-                    EmbedBuilder end = new EmbedBuilder();
-                    end
-                            .setColor(Constants.VESTRIMU_PURPLE)
-                            .setTitle("<a:loading:468689847935303682> Your audio is being processed.");
-                    channel.sendMessage(end.build()).queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
-
-                    executorService.shutdownNow();
-                    guild.getAudioManager().closeAudioConnection();
-
-                    File wavFile = new File("tmp" + File.separator + "recordings" + File.separator + uuid.toString() + ".wav");
-                    try {
-                        FileInputStream pcmInputStream = new FileInputStream(file);
-                        FileOutputStream wavOutputStream = new FileOutputStream(wavFile);
-                        byte[] pcmBytes = IOUtils.toByteArray(pcmInputStream);
-                        AudioSystem.write(new AudioInputStream(new ByteArrayInputStream(pcmBytes),
-                                        new AudioFormat(48000, 16, 2, true,
-                                                true), pcmBytes.length / 4),
-                                AudioFileFormat.Type.WAVE, wavOutputStream);
-                        wavOutputStream.flush();
-                        wavOutputStream.close();
-                        pcmInputStream.close();
-                        fileOutputStream.close();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                    List<File> toSends = AudioUtil.compress(wavFile, uuid.toString());
-                    int iter = 1;
-                    for (File toSend : toSends)
-                        channel.sendFile(toSend, "Vestrimu Call Recording Part " + iter++ + ".mp3").queue();
+                    endCall(channel, guild, uuid, file, fileOutputStream, executorService);
                 }
                 );
 
         final AtomicInteger seconds = new AtomicInteger();
 
-        executorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    fileOutputStream.write(recordHandler.getOutputStream().toByteArray());
-                    recordHandler.getOutputStream().reset();
-                    seconds.addAndGet(3);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        executorService.scheduleAtFixedRate(() -> {
+            try {
+                fileOutputStream.write(recordHandler.getOutputStream().toByteArray());
+                recordHandler.getOutputStream().reset();
+                seconds.addAndGet(3);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }, 0, 3, TimeUnit.SECONDS);
 
 
 
+    }
+
+    private void endCall(MessageChannel channel, Guild guild, UUID uuid, File file, FileOutputStream fileOutputStream, ScheduledExecutorService executorService) {
+        EmbedBuilder end = new EmbedBuilder();
+        end
+                .setColor(Constants.VESTRIMU_PURPLE)
+                .setTitle("<a:loading:468689847935303682> Your audio is being processed.");
+        channel.sendMessage(end.build()).queue(msg -> msg.delete().queueAfter(120, TimeUnit.SECONDS));
+
+        executorService.shutdownNow();
+        guild.getAudioManager().closeAudioConnection();
+
+        File wavFile = new File("tmp" + File.separator + "recordings" + File.separator + uuid.toString() + ".wav");
+        try {
+            FileInputStream pcmInputStream = new FileInputStream(file);
+            FileOutputStream wavOutputStream = new FileOutputStream(wavFile);
+            byte[] pcmBytes = IOUtils.toByteArray(pcmInputStream);
+            AudioSystem.write(new AudioInputStream(new ByteArrayInputStream(pcmBytes),
+                            new AudioFormat(48000, 16, 2, true,
+                                    true), pcmBytes.length / 4),
+                    AudioFileFormat.Type.WAVE, wavOutputStream);
+            wavOutputStream.flush();
+            wavOutputStream.close();
+            pcmInputStream.close();
+            fileOutputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        List<File> toSends = AudioUtil.compress(wavFile, uuid.toString());
+        int iter = 1;
+        for (File toSend : toSends)
+            channel.sendFile(toSend, "Vestrimu Call Recording Part " + iter++ + ".mp3").queue();
     }
 
 

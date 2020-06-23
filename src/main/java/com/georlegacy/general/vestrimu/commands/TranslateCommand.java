@@ -54,7 +54,7 @@ public class TranslateCommand extends Command {
             eb
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setTitle("**Sorry**")
-                    .setDescription("The language you provided (`" + args.get(0) + "`) is not a valid language. Find a list fo valid languages here\ninsert link")
+                    .setDescription("The language you provided (`" + args.get(0) + "`) is not a valid language. Find a list of valid languages here\nhttps://yandex.com/support/webmaster/robot-workings/supported-languages.html")
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();
             return;

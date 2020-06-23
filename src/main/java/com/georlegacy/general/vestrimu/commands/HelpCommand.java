@@ -97,7 +97,7 @@ public class HelpCommand extends Command {
             if (command.getAccessType().equals(CommandAccessType.SERVER_MOD) && (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() ? !(event.getMember().getRoles().contains(event.getGuild().getRoleById(sqlManager.readGuild(event.getGuild().getId()).getBotmodroleid()))) : !(event.getMember().isOwner())))
                 continue;
             commands.addField(
-                    (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " : command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " : command.getAccessType().equals(CommandAccessType.SERVER_MOD) ? ":regiona_indicator_m: " : ":eight_pointed_black_star: ") +
+                    (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " : command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " : command.getAccessType().equals(CommandAccessType.SERVER_MOD) ? ":regional_indicator_m: " : ":eight_pointed_black_star: ") +
                             configuration.getPrefix() +
                             String.join("|", command.getNames()),
                     command.getDescription() +

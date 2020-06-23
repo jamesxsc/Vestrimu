@@ -9,7 +9,7 @@ public abstract class Command {
     private final String description;
     private final String help;
     private final CommandAccessType accessType;
-    private boolean onlyAdminModeServers;
+    private final boolean onlyAdminModeServers;
 
     protected Command() {
         this(null, null, null, CommandAccessType.USER_ANY, false);

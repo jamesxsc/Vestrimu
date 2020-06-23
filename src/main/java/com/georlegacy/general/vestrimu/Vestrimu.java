@@ -1,22 +1,12 @@
 package com.georlegacy.general.vestrimu;
 
-import com.georlegacy.general.vestrimu.commands.AccessRequiredForHelpToggleCommand;
-import com.georlegacy.general.vestrimu.commands.EvaluateCommand;
-import com.georlegacy.general.vestrimu.commands.GuildInfoCommand;
-import com.georlegacy.general.vestrimu.commands.HelpCommand;
-import com.georlegacy.general.vestrimu.commands.PurgeCommand;
-import com.georlegacy.general.vestrimu.commands.RecordCommand;
-import com.georlegacy.general.vestrimu.commands.RestoreCommand;
-import com.georlegacy.general.vestrimu.commands.SetPrefixCommand;
-import com.georlegacy.general.vestrimu.commands.StatsCommand;
-import com.georlegacy.general.vestrimu.commands.StopCommand;
-import com.georlegacy.general.vestrimu.commands.TranslateCommand;
-import com.georlegacy.general.vestrimu.commands.UserInfoCommand;
-import com.georlegacy.general.vestrimu.commands.WebhookCommand;
+import com.georlegacy.general.vestrimu.commands.*;
 import com.georlegacy.general.vestrimu.commands.behaviour.BehaviourInfoCommand;
+import com.georlegacy.general.vestrimu.commands.behaviour.KickCommand;
 import com.georlegacy.general.vestrimu.commands.behaviour.WarnCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
 import com.georlegacy.general.vestrimu.core.managers.CommandManager;
+import com.georlegacy.general.vestrimu.core.managers.HungerGamesManager;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
 import com.georlegacy.general.vestrimu.core.tasks.ClearTempDirectory;
@@ -54,10 +44,13 @@ public class Vestrimu {
     @Getter
     @Inject
     private SQLManager sqlManager;
+    @Getter
+    @Inject
+    private HungerGamesManager hungerGamesManager;
 
     // Listeners
     @Getter
-    private EventWaiter eventWaiter;
+    private final EventWaiter eventWaiter;
 
     @Inject
     private BotMentionListener botMentionListener;
@@ -90,6 +83,8 @@ public class Vestrimu {
     @Inject
     private WarnCommand warnCommand;
     @Inject
+    private KickCommand kickCommand;
+    @Inject
     private PurgeCommand purgeCommand;
 
     @Inject
@@ -104,6 +99,8 @@ public class Vestrimu {
     private UserInfoCommand userInfoCommand;
     @Inject
     private BehaviourInfoCommand behaviourInfoCommand;
+    @Inject
+    private HungerGamesCommand hungerGamesCommand;
 
     @Getter
     private ShardManager shardManager;
@@ -147,7 +144,7 @@ public class Vestrimu {
         // Adding commands
         commandManager.addCommand(evaluateCommand);
         commandManager.addCommand(stopCommand);
-        commandManager.addCommand(recordCommand);
+//        commandManager.addCommand(recordCommand); // not used until discord fix
 
         commandManager.addCommand(accessRequiredForHelpToggleCommand);
         commandManager.addCommand(restoreCommand);
@@ -155,6 +152,7 @@ public class Vestrimu {
         commandManager.addCommand(webhookCommand);
 
         commandManager.addCommand(warnCommand);
+        commandManager.addCommand(kickCommand);
         commandManager.addCommand(purgeCommand);
 
         commandManager.addCommand(helpCommand);
@@ -163,6 +161,7 @@ public class Vestrimu {
         commandManager.addCommand(translateCommand);
         commandManager.addCommand(userInfoCommand);
         commandManager.addCommand(behaviourInfoCommand);
+        commandManager.addCommand(hungerGamesCommand);
 
         webhookManager.loadWebhooks();
 

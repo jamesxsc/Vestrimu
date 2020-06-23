@@ -62,13 +62,17 @@
         <repository>
             <id>jcenter</id>
             <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <url>https://jcenter.bintray.com</url>
         </repository>
-        <repository>
-            <id>615283</id>
-            <name>615283-repo</name>
-            <url>https://repo.615283.net:8443/repository/maven-releases/</url>
-        </repository>
+        <!--        <repository>-->
+        <!--            <id>icm</id>-->
+        <!--            <url>http://maven.icm.edu.pl/artifactory/repo/</url>-->
+        <!--        </repository>-->
+        <!--        <repository>-->
+        <!--            <id>615283</id>-->
+        <!--            <name>615283-repo</name>-->
+        <!--            <url>https://repo.615283.net/repository/maven-public/</url>-->
+        <!--        </repository>-->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -84,8 +88,9 @@
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities</artifactId>
-            <version>LATEST</version>
-            <scope>compile</scope>
+            <version>2.1.5</version>
+            <!--            <scope>compile</scope>-->
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -117,12 +122,14 @@
             <groupId>com.rmtheis.yandtran</groupId>
             <artifactId>yandex-translator-java-api</artifactId>
             <version>1.1</version>
-            <classifier>shaded</classifier>
+            <!--            <classifier>shaded</classifier>-->
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/yandex-translator-java-api-V1.1.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>it.sauronsoftware</groupId>
-            <artifactId>jave</artifactId>
-            <version>1.0.2</version>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-all-deps</artifactId>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -141,8 +148,21 @@
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>RELEASE</version>
+            <version>1.2.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.napstr</groupId>

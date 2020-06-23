@@ -26,7 +26,8 @@ import java.util.List;
 
 public class WebhookCommand extends Command {
 
-    @Inject private SQLManager sqlManager;
+    @Inject
+    private SQLManager sqlManager;
 
     public WebhookCommand() {
         super(new String[]{"wh", "webhook", "sendwebhook"}, "Sends webhooks to the server.", "<channel> <args>", CommandAccessType.SERVER_ADMIN, true);
@@ -79,7 +80,7 @@ public class WebhookCommand extends Command {
             return;
         }
 
-        List<TextChannel> mentioned  = message.getMentionedChannels();
+        List<TextChannel> mentioned = message.getMentionedChannels();
         if (mentioned.size() == 0) {
             EmbedBuilder eb = new EmbedBuilder();
             eb
@@ -301,7 +302,16 @@ public class WebhookCommand extends Command {
             return;
         }
 
-        Vestrimu.getLogger().debug("variables set");
+        if (webhookName != null && (webhookName.length() > 32 || webhookName.length() < 2)) {
+            EmbedBuilder eb = new EmbedBuilder();
+            eb
+                    .setTitle("Sorry")
+                    .setDescription("The webhook name must be between 2 and 32 characters")
+                    .setColor(Constants.VESTRIMU_PURPLE)
+                    .setFooter("Vestrimu", Constants.ICON_URL);
+            channel.sendMessage(eb.build()).queue();
+            return;
+        }
 
         if (currentFieldName != null) {
             EmbedBuilder eb = new EmbedBuilder();
@@ -387,7 +397,6 @@ public class WebhookCommand extends Command {
                     for (Map.Entry<String, String> field : fieldsFinal.entrySet())
                         embed.addField(field.getKey(), field.getValue(), fieldsInlineFinal);
 
-                    WebhookClient client = webhook.newClient().build();
                     WebhookMessageBuilder builder = new WebhookMessageBuilder();
                     if (plainMessageFinal != null)
                         builder.append(plainMessageFinal);
@@ -395,23 +404,27 @@ public class WebhookCommand extends Command {
                         builder.addEmbeds(embed.build());
 
                     try {
+                        HttpsURLConnection con;
                         if (avatarUrlFinal != null) {
-                            HttpsURLConnection con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
+                            con = (HttpsURLConnection) new URL(avatarUrlFinal).openConnection();
                             con.addRequestProperty("User-Agent", "Mozilla/4.76");
-                            webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal)
-                                    .setAvatar(avatarUrlFinal == null ? Icon
-                                            .from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon
-                                            .from(con.getInputStream())).setChannel(mentioned.get(0)).queue(consumer -> {
-                                client.send(builder.build());
-                                webhook.getManager().setName("Vestrimu Primary Webhook").queue();
-                            });
-                        }
+                        } else
+                            con = null;
+                        webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal)
+                                .setAvatar(avatarUrlFinal == null ? Icon
+                                        .from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon
+                                        .from(con.getInputStream())).setChannel(mentioned.get(0)).queue(consumer -> {
+                            WebhookClient client = webhook.newClient().build();
+                            client.send(builder.build());
+                            client.close();
+                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                     try {
                         webhook.getManager().setAvatar(Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png"))).queue();
+                        webhook.getManager().setName("Vestrimu Primary Webhook").queue();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
