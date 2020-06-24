@@ -15,6 +15,9 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.react.GenericGuildMessageReactionEvent;
+
+import java.util.concurrent.TimeUnit;
 
 public class HungerGamesCommand extends Command {
 
@@ -67,14 +70,28 @@ public class HungerGamesCommand extends Command {
                     eb
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setTitle("Success")
-                            .setDescription(member.getAsMention() + ", you have been reaped to participate in the Hunger Games!")
+                            .setDescription(member.getAsMention() + ", you have been reaped to participate in the Hunger Games!\nAs the games progress, you will have to make decisions through PMs with the bot.")
                             .addField("Your District", String.valueOf(tribute.getDistrict()), false)
                             .setFooter("Vestrimu", Constants.ICON_URL);
                 }
             }
-            if (game.getTributes().size() > 6) {
-                // todo start game/timer
-            }
+            if (game.getTributes().size() > 1) {
+                channel.sendMessage(eb.build()).queue();
+                EmbedBuilder startWarning = new EmbedBuilder();
+                startWarning
+                        .setColor(Constants.VESTRIMU_PURPLE)
+                        .setTitle("Alert")
+                        .setDescription("The Hunger Games will begin in 2 minutes or when a moderator reacts to this message with :white_check_mark:!")
+                        .setFooter("Vestrimu", Constants.ICON_URL);
+                channel.sendMessage(startWarning.build()).queue(m -> m.addReaction("\u2705").queue());
+                Vestrimu.getInstance().getEventWaiter().waitForEvent(GenericGuildMessageReactionEvent.class,
+                        (genericGuildMessageReactionEvent) ->
+                                genericGuildMessageReactionEvent.getMember().getRoles().contains(guild.getRoleById(configuration.getBotmodroleid())) &&
+                                        genericGuildMessageReactionEvent.getReaction().getReactionEmote().getName().equals("\u2705"),
+                        (genericGuildMessageReactionEvent) -> startGame(game),
+                        2, TimeUnit.MINUTES, () -> startGame(game));
+            } else
+                channel.sendMessage(eb.build()).queue();
         } else {
             HungerGamesGame game = new HungerGamesGame(channel);
             manager.getGames().put(guild.getId(), game);
@@ -83,8 +100,34 @@ public class HungerGamesCommand extends Command {
                     .setTitle("Success")
                     .setDescription("The Hunger Games has begun in this channel, use `" + configuration.getPrefix() + "hungergames` to join the games!")
                     .setFooter("Vestrimu", Constants.ICON_URL);
+            channel.sendMessage(eb.build()).queue();
         }
-        channel.sendMessage(eb.build()).queue();
+    }
+
+    private void startGame(HungerGamesGame game) {
+        EmbedBuilder eb = new EmbedBuilder();
+        eb
+                .setColor(Constants.VESTRIMU_PURPLE)
+                .setTitle("Alert")
+                .setDescription("The Hunger Games is now beginning!")
+                .addField("Tributes", String.valueOf(game.getTributes().size()), false)
+                .setFooter("Vestrimu", Constants.ICON_URL);
+        game.getChannel().sendMessage(eb.build()).queue();
+
+        game.setStatus(HungerGamesGame.GameStatus.LAUNCH);
+
+        EmbedBuilder countdown = new EmbedBuilder();
+        countdown
+                .setColor(Constants.VESTRIMU_PURPLE)
+                .setTitle("Alert")
+                .setDescription("The Hunger Games will start in `5` seconds!")
+                .setFooter("Vestrimu", Constants.ICON_URL);
+
+        game.getChannel().sendMessage(countdown.build()).queueAfter(3, TimeUnit.SECONDS, (m) -> {
+            for (int i = 4; i > 0; i--)
+                m.editMessage(countdown.setDescription("The Hunger Games will start in `" + i + "` seconds!").build()).queueAfter(5 - i, TimeUnit.SECONDS);
+            m.editMessage(countdown.setDescription("The Hunger Games will start in `0` seconds!").build()).queueAfter(5, TimeUnit.SECONDS, (m1) -> game.startGame());
+        });
     }
 
 }

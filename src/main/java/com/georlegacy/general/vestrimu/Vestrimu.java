@@ -5,10 +5,7 @@ import com.georlegacy.general.vestrimu.commands.behaviour.BehaviourInfoCommand;
 import com.georlegacy.general.vestrimu.commands.behaviour.KickCommand;
 import com.georlegacy.general.vestrimu.commands.behaviour.WarnCommand;
 import com.georlegacy.general.vestrimu.core.BinderModule;
-import com.georlegacy.general.vestrimu.core.managers.CommandManager;
-import com.georlegacy.general.vestrimu.core.managers.HungerGamesManager;
-import com.georlegacy.general.vestrimu.core.managers.SQLManager;
-import com.georlegacy.general.vestrimu.core.managers.WebhookManager;
+import com.georlegacy.general.vestrimu.core.managers.*;
 import com.georlegacy.general.vestrimu.core.tasks.ClearTempDirectory;
 import com.georlegacy.general.vestrimu.listeners.BotMentionListener;
 import com.georlegacy.general.vestrimu.listeners.BotModeReactionSelectionListener;
@@ -47,6 +44,9 @@ public class Vestrimu {
     @Getter
     @Inject
     private HungerGamesManager hungerGamesManager;
+    @Getter
+    @Inject
+    private UnsplashManager unsplashManager;
 
     // Listeners
     @Getter

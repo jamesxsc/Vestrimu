@@ -81,7 +81,6 @@ public class CommandManager extends ListenerAdapter {
                     if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN)) {
                         if (Constants.ADMIN_IDS.contains(event.getAuthor().getId())) {
                             command.run(event);
-                            return;
                         } else {
                             EmbedBuilder eb = new EmbedBuilder();
                             eb
@@ -90,8 +89,8 @@ public class CommandManager extends ListenerAdapter {
                                     .setColor(Constants.VESTRIMU_PURPLE)
                                     .setFooter("Vestrimu", Constants.ICON_URL);
                             channel.sendMessage(eb.build()).queue();
-                            return;
                         }
+                        return;
                     } else if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN)) {
                         if (sqlManager.readGuild(guild.getId()).isAdmin_mode()) {
                             if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotaccessroleid()))) {

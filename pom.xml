@@ -122,9 +122,15 @@
             <groupId>com.rmtheis.yandtran</groupId>
             <artifactId>yandex-translator-java-api</artifactId>
             <version>1.1</version>
-            <!--            <classifier>shaded</classifier>-->
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/yandex-translator-java-api-V1.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.github.rye761</groupId>
+            <artifactId>unsplash-java-unofficial</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/Unsplash-Java-Unofficial.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>ws.schild</groupId>
@@ -135,6 +141,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.scribejava</groupId>
+            <artifactId>scribejava-core</artifactId>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
