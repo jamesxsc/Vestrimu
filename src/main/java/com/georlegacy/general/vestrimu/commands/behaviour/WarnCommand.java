@@ -9,11 +9,11 @@ import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ public class WarnCommand extends Command {
 
         Member member;
 
-        if (!args.isEmpty() ? args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention() : null) : false)
+        if (!args.isEmpty() && args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention() : null)) {
             member = message.getMentionedMembers().get(0);
-        else {
+        } else {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setTitle("Sorry")

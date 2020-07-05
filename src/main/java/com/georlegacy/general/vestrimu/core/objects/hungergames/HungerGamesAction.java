@@ -83,10 +83,6 @@ public class HungerGamesAction {
     }
 
     public static Set<HungerGamesActionResult> compute(Set<HungerGamesAction> actions) {
-        System.out.println(actions.iterator().next().location);
-        System.out.println(actions.iterator().next().actionType);
-        System.out.println(actions.iterator().next().tribute.getId());
-
         Map<HungerGamesAction, ResultType> resultsRaw = new HashMap<>();
 
         for (HungerGamesGame.Location location : getAllActionLocations(actions)) {

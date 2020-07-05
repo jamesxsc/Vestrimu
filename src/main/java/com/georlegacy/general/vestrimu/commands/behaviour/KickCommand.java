@@ -9,11 +9,11 @@ import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class KickCommand extends Command {
         memberRecord.addPunishment(new Punishment(Punishment.PunishmentType.KICK,
                 reason, 0, event.getAuthor()));
         guildRecord.getMemberRecords().put(member.getUser().getId(), memberRecord);
-        event.getGuild().getController().kick(member, reason).queue((v) -> {
+        event.getGuild().kick(member, reason).queue((v) -> {
             sqlManager.updateGuild(configuration.setGuild_behaviour_record(guildRecord.serialize().toString()));
             EmbedBuilder eb = new EmbedBuilder();
             eb

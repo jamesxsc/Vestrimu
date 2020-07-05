@@ -4,11 +4,11 @@ import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.util.Constants;
 import lombok.Getter;
 import lombok.Setter;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.priv.react.GenericPrivateMessageReactionEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.priv.react.GenericPrivateMessageReactionEvent;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -146,6 +146,8 @@ public class HungerGamesGame {
     public enum ArenaType {
         DESERT,
         RAINFOREST,
+        FOREST,
+        OCEAN,
         ;
     }
 

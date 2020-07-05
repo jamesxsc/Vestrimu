@@ -6,7 +6,7 @@ import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourReco
 import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.google.inject.Singleton;
 import lombok.Getter;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 import org.json.JSONObject;
 
 import java.sql.*;

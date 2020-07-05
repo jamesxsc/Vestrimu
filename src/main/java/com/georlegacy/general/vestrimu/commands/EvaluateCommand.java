@@ -6,11 +6,11 @@ import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.google.inject.Inject;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -37,6 +37,8 @@ public class EvaluateCommand extends Command {
                     "java.util," +
                     "java.awt," +
                     "Packages.net.dv8tion.jda.core," +
+                    "Packages.net.dv8tion.jda.core.entities," +
+                    "Packages.net.dv8tion.jda.core.events.message," +
                     "Packages.com.georlegacy.general.vestrimu," +
                     "Packages.com.rmtheis.yandtran" +
             ");");

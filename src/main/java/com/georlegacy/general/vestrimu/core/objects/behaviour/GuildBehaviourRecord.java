@@ -2,7 +2,7 @@ package com.georlegacy.general.vestrimu.core.objects.behaviour;
 
 import com.georlegacy.general.vestrimu.core.objects.base.JSONSerializable;
 import lombok.Getter;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 
 import java.util.HashMap;
 import java.util.Map;

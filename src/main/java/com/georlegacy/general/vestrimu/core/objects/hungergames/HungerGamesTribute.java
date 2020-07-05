@@ -2,7 +2,7 @@ package com.georlegacy.general.vestrimu.core.objects.hungergames;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.api.entities.Member;
 
 public class HungerGamesTribute {
 

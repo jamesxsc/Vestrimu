@@ -5,9 +5,9 @@ import com.georlegacy.general.vestrimu.core.objects.behaviour.GuildBehaviourReco
 import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.priv.react.PrivateMessageReactionAddEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.priv.react.PrivateMessageReactionAddEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 
 public class BotModeReactionSelectionListener extends ListenerAdapter {

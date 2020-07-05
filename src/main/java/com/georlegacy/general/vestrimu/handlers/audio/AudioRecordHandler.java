@@ -1,9 +1,9 @@
 package com.georlegacy.general.vestrimu.handlers.audio;
 
 import lombok.Getter;
-import net.dv8tion.jda.core.audio.AudioReceiveHandler;
-import net.dv8tion.jda.core.audio.CombinedAudio;
-import net.dv8tion.jda.core.audio.UserAudio;
+import net.dv8tion.jda.api.audio.AudioReceiveHandler;
+import net.dv8tion.jda.api.audio.CombinedAudio;
+import net.dv8tion.jda.api.audio.UserAudio;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

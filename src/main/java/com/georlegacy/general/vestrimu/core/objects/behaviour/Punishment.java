@@ -2,7 +2,7 @@ package com.georlegacy.general.vestrimu.core.objects.behaviour;
 
 import com.georlegacy.general.vestrimu.util.Constants;
 import lombok.Getter;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.Date;
 

@@ -4,7 +4,9 @@ import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.objects.config.GuildConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Webhook;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

@@ -10,12 +10,12 @@ import com.georlegacy.general.vestrimu.core.objects.hungergames.HungerGamesGame;
 import com.georlegacy.general.vestrimu.core.objects.hungergames.HungerGamesTribute;
 import com.georlegacy.general.vestrimu.util.Constants;
 import com.google.inject.Inject;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.react.GenericGuildMessageReactionEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +75,7 @@ public class HungerGamesCommand extends Command {
                             .setFooter("Vestrimu", Constants.ICON_URL);
                 }
             }
-            if (game.getTributes().size() > 1) {
+            if (game.getTributes().size() > 0) {
                 channel.sendMessage(eb.build()).queue();
                 EmbedBuilder startWarning = new EmbedBuilder();
                 startWarning

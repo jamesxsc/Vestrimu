@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+@SuppressWarnings("rawtypes")
 public final class BinderModule extends AbstractModule {
 
     private static Class clazz;
