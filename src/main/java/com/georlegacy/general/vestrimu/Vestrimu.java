@@ -16,6 +16,8 @@ import com.google.inject.Singleton;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.sharding.DefaultShardManager;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
@@ -142,7 +144,7 @@ public class Vestrimu {
         // Adding commands
         commandManager.addCommand(evaluateCommand);
         commandManager.addCommand(stopCommand);
-//        commandManager.addCommand(recordCommand); // not used until discord fix
+        commandManager.addCommand(recordCommand);
 
         commandManager.addCommand(accessRequiredForHelpToggleCommand);
         commandManager.addCommand(restoreCommand);
@@ -187,7 +189,7 @@ public class Vestrimu {
         try {
             shardManager = new DefaultShardManagerBuilder()
                     .setToken(SecretConstants.TOKEN)
-                    .setGame(Game.listening("@Vestrimu"))
+                    .setActivity(Activity.listening("@Vestrimu"))
                     .setAutoReconnect(true)
                     .setBulkDeleteSplittingEnabled(false)
                     .setStatus(OnlineStatus.IDLE)

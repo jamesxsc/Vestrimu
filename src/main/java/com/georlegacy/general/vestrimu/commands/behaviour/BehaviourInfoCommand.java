@@ -44,8 +44,7 @@ public class BehaviourInfoCommand extends Command {
         args.remove(0);
 
         Member member;
-
-        if (!args.isEmpty() ? args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention() : null) : false)
+        if (!args.isEmpty() && args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention().replaceFirst("@!", "@").replaceFirst("@", "@!") : null))
             member = message.getMentionedMembers().get(0);
         else
             try {

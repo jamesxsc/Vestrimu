@@ -56,7 +56,7 @@ public class JoinNewGuildListener extends ListenerAdapter {
                             .addField("Help", "If you need help getting started, ping me in any channel.", true);
                     guild.getDefaultChannel().sendMessage(eb.build()).queue();
                     if (guild.getRoleById(configuration.getBotaccessroleid()) == null) {
-                        guild.getController().createRole()
+                        guild.createRole()
                                 .setColor(Constants.VESTRIMU_PURPLE)
                                 .setName("Vestrimu Access")
                                 .queue(role ->
@@ -74,11 +74,11 @@ public class JoinNewGuildListener extends ListenerAdapter {
                         .setDescription("I'm **Vestrimu**, your new server administration bot!")
                         .addField("Help", "If you need help getting started, ping me in any channel.", true);
                 guild.getDefaultChannel().sendMessage(eb.build()).queue();
-                guild.getController().createRole()
+                guild.createRole()
                         .setColor(Constants.VESTRIMU_PURPLE)
                         .setName("Vestrimu Access")
                         .queue(role -> {
-                            guild.getController().createRole()
+                            guild.createRole()
                                     .setColor(Constants.VESTRIMU_PURPLE)
                                     .setName("Vestrimu Moderator")
                                     .queue(role2 -> {

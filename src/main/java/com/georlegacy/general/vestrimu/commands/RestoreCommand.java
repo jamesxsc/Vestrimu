@@ -71,7 +71,7 @@ public class RestoreCommand extends Command {
                 .setTitle("**Bot Fix**")
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setDescription("<a:loading:468689847935303682> **Checking primary webhook**");
-        guild.getWebhooks().queue(webhooks -> {
+        guild.retrieveWebhooks().queue(webhooks -> {
             for (Webhook webhook : webhooks) {
                 if (webhook.getId().equals(configuration.getPrimarywebhookid())) {
                     webhookExists.set(true);
@@ -97,7 +97,7 @@ public class RestoreCommand extends Command {
                 finish.addField("Permissions", ":white_check_mark: The bot had the correct permissions to fix issues", true);
                 if (!roleExists) {
                     finish.addField("Access Role", ":white_check_mark: The bot's access role has successfully been repaired", true);
-                    guild.getController().createRole()
+                    guild.createRole()
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setName("Vestrimu Access")
                             .queue(role -> {
@@ -106,7 +106,7 @@ public class RestoreCommand extends Command {
                 }
                 if (!modRoleExists) {
                     finish.addField("Moderator Role", ":white_check_mark: The bot's moderator role has successfully been repaired", true);
-                    guild.getController().createRole()
+                    guild.createRole()
                             .setColor(Constants.VESTRIMU_PURPLE)
                             .setName("Vestrimu Moderator")
                             .queue(role -> {

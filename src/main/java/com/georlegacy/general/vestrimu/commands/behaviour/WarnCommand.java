@@ -37,7 +37,7 @@ public class WarnCommand extends Command {
 
         Member member;
 
-        if (!args.isEmpty() && args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention() : null)) {
+        if (!args.isEmpty() && args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention().replaceFirst("@!", "@").replaceFirst("@", "@!") : null)) {
             member = message.getMentionedMembers().get(0);
         } else {
             EmbedBuilder eb = new EmbedBuilder();

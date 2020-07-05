@@ -29,8 +29,7 @@ public class UserInfoCommand extends Command {
         args.remove(0);
 
         Member member;
-
-        if (!args.isEmpty() ? args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention() : null) : false)
+        if (!args.isEmpty() && args.get(0).equals(!message.getMentionedMembers().isEmpty() ? message.getMentionedMembers().get(0).getAsMention().replaceFirst("@!", "@").replaceFirst("@", "@!") : null))
             member = message.getMentionedMembers().get(0);
         else
             try {
@@ -54,19 +53,20 @@ public class UserInfoCommand extends Command {
                 .addField("ID", user.getId(), true)
                 .addField("Status", (member.getOnlineStatus() == OnlineStatus.ONLINE ? "<:online:469796710923894787> `ONLINE`" :
                         member.getOnlineStatus() == OnlineStatus.DO_NOT_DISTURB ? "<:dnd:469796710881951744> `DO NOT DISTURB`" :
-                        member.getOnlineStatus() == OnlineStatus.IDLE ? "<:idle:469796710760054795> `IDLE`" :
-                        "<:offline:469796710860718080> `OFFLINE`"), true);
-        if (member.getGame() != null)
-            eb.addField("Game", (member.getGame().getType().equals(Game.GameType.DEFAULT) ? "Playing **" :
-                    member.getGame().getType().equals(Game.GameType.LISTENING) ? "Listening to **" :
-                            member.getGame().getType().equals(Game.GameType.WATCHING) ? "Watching **" : "Streaming **") +
-                    member.getGame().getName() + "** " + (member.getGame().isRich() ? "<:richpresence:469804127900270602>" : ""), true);
+                                member.getOnlineStatus() == OnlineStatus.IDLE ? "<:idle:469796710760054795> `IDLE`" :
+                                        "<:offline:469796710860718080> `OFFLINE`"), true);
+        if (!member.getActivities().isEmpty()) {
+            for (Activity activity : member.getActivities()) {
+                //todo
+                eb.addField(activity.getType().name(), "`" + activity.getName() + "`" + (activity.isRich() ? "<:richpresence:469804127900270602>" : ""), true);
+            }
+        }
         eb
                 .addField("Account Type", user.isBot() ? "Bot" : "User", true)
                 .addField("Avatar", "[`Current Avatar`](" + user.getAvatarUrl() + ")\n[`Default Avatar`](" + user.getDefaultAvatarUrl() + " \"Default Avatar\")", true)
                 .addField("Roles", roleBuilder.toString(), false)
-                .addField("Account Created", user.getCreationTime().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy H:m:s z")), true)
-                .addField("Joined Server", member.getJoinDate().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy H:m:s z")), true)
+                .addField("Account Created", user.getTimeCreated().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss z")), true)
+                .addField("Joined Server", member.getTimeJoined().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss z")), true)
                 .setColor(Constants.VESTRIMU_PURPLE)
                 .setFooter("Vestrimu", Constants.ICON_URL);
 

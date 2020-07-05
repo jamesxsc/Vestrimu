@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.priv.react.GenericPrivateMessageReactionEvent;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,7 @@ public class HungerGamesGame {
             maxDistrictFull = false;
         } else
             maxDistrictFull = true;
-        HungerGamesTribute tribute = new HungerGamesTribute(member, maxDistrict);
+        HungerGamesTribute tribute = new HungerGamesTribute(member, maxDistrict, Location.CORNUCOPIA);
         this.tributes.add(tribute);
         return tribute;
     }
@@ -102,7 +103,7 @@ public class HungerGamesGame {
                                     actions.get().add(new HungerGamesAction(tribute, HungerGamesAction.ActionType.RUN, Location.INNER));
 
                                 if (actions.get().size() == getTributes().size()) {
-                                    HungerGamesAction.compute(actions.get());
+                                    processResults(HungerGamesAction.compute(actions.get()));
                                     System.out.println("Computed...");
                                 }
                             },
@@ -117,7 +118,7 @@ public class HungerGamesGame {
                                 actions.get().add(new HungerGamesAction(tribute, HungerGamesAction.ActionType.NONE, Location.INNER));
 
                                 if (actions.get().size() == getTributes().size()) {
-                                    HungerGamesAction.compute(actions.get());
+                                    processResults(HungerGamesAction.compute(actions.get()));
                                     System.out.println("Computed...");
                                 }
                             });
@@ -127,7 +128,15 @@ public class HungerGamesGame {
     }
 
     private void processResults(Set<HungerGamesActionResult> results) {
-
+        //todo temp, this only sends one basic response to the user in a pm at this point in time
+        for (HungerGamesActionResult result : results) {
+            Objects.requireNonNull(Vestrimu.getInstance().getShardManager().getUserById(result.getTribute().getId())).openPrivateChannel().queue(channel -> {
+                channel.sendMessage("Result:").queue();
+                channel.sendMessage(result.getType().name()).queue();
+                channel.sendMessage("Alive:").queue();
+                channel.sendMessage(String.valueOf(result.getTribute().isAlive())).queue();
+            });
+        }
     }
 
     private boolean progressGame() {

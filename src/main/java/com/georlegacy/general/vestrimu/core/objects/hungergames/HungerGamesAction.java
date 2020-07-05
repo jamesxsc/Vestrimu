@@ -50,7 +50,7 @@ public class HungerGamesAction {
         BARE_ATTACK(2),
         RUN(3),
         ;
-
+        //todo add custom tribute consumer to process actions like run to change location?
         private final int id;
 
         ActionType(int id) {
@@ -108,15 +108,13 @@ public class HungerGamesAction {
             }
         }
 
+        Set<HungerGamesActionResult> result = new HashSet<>();
+
         for (Map.Entry<HungerGamesAction, ResultType> entry : resultsRaw.entrySet()) {
-            System.out.println(entry.getKey().actionType.name());
-            System.out.println(entry.getValue().name());
-            System.out.println("\n");
+            result.add(new HungerGamesActionResult(entry.getKey().getTribute(), entry.getValue(), null));
         }
 
-        return new HashSet<HungerGamesActionResult>() {{
-            //
-        }};
+        return result;
     }
 
     private static Set<HungerGamesGame.Location> getAllActionLocations(Set<HungerGamesAction> actions) {

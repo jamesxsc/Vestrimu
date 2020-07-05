@@ -1,5 +1,9 @@
 package com.georlegacy.general.vestrimu.commands;
 
+import club.minnced.discord.webhook.WebhookClient;
+import club.minnced.discord.webhook.send.WebhookEmbed;
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.georlegacy.general.vestrimu.App;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.managers.SQLManager;
@@ -9,10 +13,7 @@ import com.georlegacy.general.vestrimu.util.Constants;
 import com.georlegacy.general.vestrimu.util.URLUtil;
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -370,30 +371,30 @@ public class WebhookCommand extends Command {
         final Color embedColorFinal = embedColor;
         final HashMap<String, String> fieldsFinal = fields;
 
-        event.getGuild().getWebhooks().queue(webhooks -> {
+        event.getGuild().retrieveWebhooks().queue(webhooks -> {
             Optional<Webhook> optionalWebhook = webhooks.stream().filter(webhook -> webhook.getId().equals(configuration.getPrimarywebhookid())).findFirst();
             if (optionalWebhook.isPresent()) {
                 optionalWebhook.ifPresent(webhook -> {
-                    EmbedBuilder embed = new EmbedBuilder();
+                    WebhookEmbedBuilder embed = new WebhookEmbedBuilder();
                     if (embedTitleFinal != null)
-                        embed.setTitle(embedTitleFinal);
+                        embed.setTitle(new WebhookEmbed.EmbedTitle(embedTitleFinal, null));
                     if (embedDescriptionFinal != null)
                         embed.setDescription(embedDescriptionFinal);
                     if (embedFooterTextFinal != null)
-                        embed.setFooter(embedFooterTextFinal, embedFooterIconUrlFinal);
+                        embed.setFooter(new WebhookEmbed.EmbedFooter(embedFooterTextFinal, embedFooterIconUrlFinal));
                     if (embedThumbnailUrlFinal != null)
-                        embed.setThumbnail(embedThumbnailUrlFinal);
+                        embed.setThumbnailUrl(embedThumbnailUrlFinal);
                     if (embedImageUrlFinal != null)
-                        embed.setImage(embedImageUrlFinal);
+                        embed.setImageUrl(embedImageUrlFinal);
                     if (embedAuthorNameFinal != null)
                         if (embedAuthorIconUrlFinal != null)
-                            embed.setAuthor(embedAuthorNameFinal, "https://discordapp.com", embedAuthorIconUrlFinal);
+                            embed.setAuthor(new WebhookEmbed.EmbedAuthor(embedAuthorNameFinal, "https://discordapp.com", embedAuthorIconUrlFinal));
                         else
-                            embed.setAuthor(embedAuthorNameFinal);
+                            embed.setAuthor(new WebhookEmbed.EmbedAuthor(embedAuthorNameFinal, null, null));
                     if (embedColorFinal != null)
-                        embed.setColor(embedColorFinal);
+                        embed.setColor(embedColorFinal.getRGB());
                     for (Map.Entry<String, String> field : fieldsFinal.entrySet())
-                        embed.addField(field.getKey(), field.getValue(), fieldsInlineFinal);
+                        embed.addField(new WebhookEmbed.EmbedField(fieldsInlineFinal, field.getValue(), field.getKey()));
 
                     WebhookMessageBuilder builder = new WebhookMessageBuilder();
                     if (plainMessageFinal != null)
@@ -410,9 +411,9 @@ public class WebhookCommand extends Command {
                             con = null;
                         webhook.getManager().setName(webhookNameFinal == null ? "Vestrimu" : webhookNameFinal)
                                 .setAvatar(avatarUrlFinal == null ? Icon
-                                        .from(App.class.getClassLoader().getResourceAsStream("icon.png")) : Icon
+                                        .from(Objects.requireNonNull(App.class.getClassLoader().getResourceAsStream("icon.png"))) : Icon
                                         .from(con.getInputStream())).setChannel(mentioned.get(0)).queue(consumer -> {
-                            WebhookClient client = webhook.newClient().build();
+                            WebhookClient client = WebhookClient.withId(webhook.getIdLong(), Objects.requireNonNull(webhook.getToken()));
                             client.send(builder.build());
                             client.close();
                         });
@@ -421,7 +422,7 @@ public class WebhookCommand extends Command {
                     }
 
                     try {
-                        webhook.getManager().setAvatar(Icon.from(App.class.getClassLoader().getResourceAsStream("icon.png"))).queue();
+                        webhook.getManager().setAvatar(Icon.from(Objects.requireNonNull(App.class.getClassLoader().getResourceAsStream("icon.png")))).queue();
                         webhook.getManager().setName("Vestrimu Primary Webhook").queue();
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -23,7 +23,7 @@ public class WebhookManager {
         if (!configuration.isAdmin_mode())
             return;
 
-        guild.getWebhooks().queue(webhooks -> {
+        guild.retrieveWebhooks().queue(webhooks -> {
             boolean b = true;
             for (Webhook w : webhooks) {
                 if (w.getId().equals(configuration.getPrimarywebhookid())) {
