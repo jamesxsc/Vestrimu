@@ -2,6 +2,7 @@ package com.georlegacy.general.vestrimu.core;
 
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public abstract class Command {
 
@@ -11,7 +12,7 @@ public abstract class Command {
     private final CommandAccessType accessType;
     private final boolean onlyAdminModeServers;
 
-    protected Command() {
+    private Command() {
         this(null, null, null, CommandAccessType.USER_ANY, false);
     }
 
@@ -23,9 +24,9 @@ public abstract class Command {
         this.onlyAdminModeServers = onlyAdminModeServers;
     }
 
-    public abstract void execute(MessageReceivedEvent event);
+    public abstract void execute(GuildMessageReceivedEvent event);
 
-    public void run(MessageReceivedEvent event) {
+    public void run(GuildMessageReceivedEvent event) {
         execute(event);
     }
 

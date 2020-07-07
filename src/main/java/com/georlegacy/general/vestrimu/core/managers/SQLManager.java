@@ -10,20 +10,22 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.json.JSONObject;
 
 import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class SQLManager {
 
-    @Getter private Connection connection;
+    @Getter
+    private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
 
     public SQLManager() {
         try {
             Vestrimu.getLogger().info("Loading SQL Manager...");
-            Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://10.0.0.105/vestrimu?autoReconnect=true", SecretConstants.SQL_USER, SecretConstants.SQL_PASS);
             statement = connection.createStatement();
             Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
@@ -34,7 +36,7 @@ public class SQLManager {
                     e.printStackTrace();
                 }
             }, 0, 5, TimeUnit.MINUTES);
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
@@ -54,6 +56,7 @@ public class SQLManager {
 
     /**
      * Checks the waiting status of a guild through the SQL database
+     *
      * @param guild The guild to check if the bot is waiting to enter
      * @return The ID of the confirmation private message or null if the guild is not waiting or the SQL database causes an exception to be thrown
      */
@@ -82,6 +85,7 @@ public class SQLManager {
 
     /**
      * Checks the waiting status of a guild through the SQL database
+     *
      * @param pmId The ID of the private message to find the guild with
      * @return The ID of the found guild or null ifthat private message is not from a waiting guild owner or the SQL database causes an exception to be thrown
      */
@@ -227,6 +231,33 @@ public class SQLManager {
             return false;
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public Set<Long> getBetaTesters() {
+        String query = "select `d_snowflake` from `beta_testers`";
+        Set<Long> testers = new HashSet<>();
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                testers.add(resultSet.getLong("d_snowflake"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return testers;
+    }
+
+    public boolean addBetaTester(Long id) {
+        String query = "insert into `beta_testers` (d_snowflake) values (?)";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, id);
+            preparedStatement.execute();
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
             return false;
         }
     }

@@ -14,7 +14,7 @@ import com.georlegacy.general.vestrimu.util.URLUtil;
 import com.google.inject.Inject;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -33,7 +33,7 @@ public class WebhookCommand extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(message.getContentRaw().split(" ")));

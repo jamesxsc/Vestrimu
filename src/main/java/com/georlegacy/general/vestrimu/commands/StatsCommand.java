@@ -6,7 +6,7 @@ import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessTyp
 import com.georlegacy.general.vestrimu.util.Constants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.text.DecimalFormat;
 
@@ -17,7 +17,7 @@ public class StatsCommand extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
 
         EmbedBuilder eb = new EmbedBuilder();

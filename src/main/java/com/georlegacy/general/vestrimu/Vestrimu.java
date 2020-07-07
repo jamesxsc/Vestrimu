@@ -101,6 +101,8 @@ public class Vestrimu {
     private BehaviourInfoCommand behaviourInfoCommand;
     @Inject
     private HungerGamesCommand hungerGamesCommand;
+    @Inject
+    private BetaTesterCommand betaTesterCommand;
 
     @Getter
     private ShardManager shardManager;
@@ -162,6 +164,7 @@ public class Vestrimu {
         commandManager.addCommand(userInfoCommand);
         commandManager.addCommand(behaviourInfoCommand);
         commandManager.addCommand(hungerGamesCommand);
+        commandManager.addCommand(betaTesterCommand);
 
         webhookManager.loadWebhooks();
 

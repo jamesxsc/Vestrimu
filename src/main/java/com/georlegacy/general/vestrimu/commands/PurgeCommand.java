@@ -1,6 +1,5 @@
 package com.georlegacy.general.vestrimu.commands;
 
-import com.georlegacy.general.vestrimu.Vestrimu;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
@@ -8,7 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +20,7 @@ public class PurgeCommand extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         Guild guild = event.getGuild();
         Message message = event.getMessage();
@@ -42,7 +41,7 @@ public class PurgeCommand extends Command {
 
         int toRemove;
         try {
-            toRemove = Integer.parseInt(args.get(0));
+            toRemove = Integer.parseInt(args.get(0)) + 1;
         } catch (NumberFormatException ex) {
             EmbedBuilder eb = new EmbedBuilder();
             eb
@@ -58,7 +57,7 @@ public class PurgeCommand extends Command {
             EmbedBuilder eb = new EmbedBuilder();
             eb
                     .setTitle("Sorry")
-                    .setDescription("I can only purge up to 100 messages at a time.")
+                    .setDescription("I can only purge up to 99 messages at a time.")
                     .setColor(Constants.VESTRIMU_PURPLE)
                     .setFooter("Vestrimu", Constants.ICON_URL);
             channel.sendMessage(eb.build()).queue();

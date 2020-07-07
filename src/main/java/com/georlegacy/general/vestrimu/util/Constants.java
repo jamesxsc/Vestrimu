@@ -9,7 +9,7 @@ public class Constants {
     public static final String VESTRIMU_ID = "461215419861303318";
 
     public static final List<String> ADMIN_IDS = Arrays.asList(
-            "385876034098036756", // 615283
+            "385876034098036756", // 615283 (KEEP AT TOP OF LIST)
             "407658369017577474" // satan xd
     );
 

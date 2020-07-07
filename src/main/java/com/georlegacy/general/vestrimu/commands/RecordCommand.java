@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.IOUtils;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -35,7 +35,7 @@ public class RecordCommand extends Command {
     @Inject private SQLManager sqlManager;
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         Member member = event.getMember();
         MessageChannel channel = event.getChannel();
         Guild guild = event.getGuild();
@@ -144,7 +144,7 @@ public class RecordCommand extends Command {
 
 
     public RecordCommand() {
-        super(new String[]{"recordcall", "tapecall"}, "Records the duration of a call. [WIP]", "", CommandAccessType.SUPER_ADMIN, false);
+        super(new String[]{"recordcall", "tapecall"}, "Records the duration of a call. [WIP]", "", CommandAccessType.BETA_TESTER, false);
     }
 
 }

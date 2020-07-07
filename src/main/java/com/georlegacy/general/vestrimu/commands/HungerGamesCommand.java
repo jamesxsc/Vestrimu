@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent;
 
 import java.util.concurrent.TimeUnit;
@@ -25,14 +25,14 @@ public class HungerGamesCommand extends Command {
     private SQLManager sqlManager;
 
     public HungerGamesCommand() {
-        super(new String[]{"hungergames", "hg"}, "Play hunger games!", "", CommandAccessType.USER_ANY, false);
+        super(new String[]{"hungergames", "hg"}, "Play hunger games!", "", CommandAccessType.BETA_TESTER, false);
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         HungerGamesManager manager = Vestrimu.getInstance().getHungerGamesManager();
         Guild guild = event.getGuild();
-        TextChannel channel = event.getTextChannel();
+        TextChannel channel = event.getChannel();
         Member member = event.getMember();
         GuildConfiguration configuration = sqlManager.readGuild(event.getGuild().getId());
 

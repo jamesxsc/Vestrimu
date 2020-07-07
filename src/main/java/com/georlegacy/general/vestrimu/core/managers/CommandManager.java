@@ -12,17 +12,20 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Singleton
 public class CommandManager extends ListenerAdapter {
 
-    @Inject private SQLManager sqlManager;
+    @Inject
+    private SQLManager sqlManager;
 
-    private List<Command> commands;
+    private final List<Command> commands;
 
     public CommandManager() {
         commands = new ArrayList<Command>();
@@ -37,7 +40,7 @@ public class CommandManager extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         Message message = event.getMessage();
         MessageChannel channel = event.getChannel();
         Guild guild = event.getGuild();
@@ -74,10 +77,6 @@ public class CommandManager extends ListenerAdapter {
                         command.run(event);
                         return;
                     }
-                    if (event.getMember().equals(guild.getOwner())) {
-                        command.run(event);
-                        return;
-                    }
                     if (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN)) {
                         if (Constants.ADMIN_IDS.contains(event.getAuthor().getId())) {
                             command.run(event);
@@ -91,11 +90,15 @@ public class CommandManager extends ListenerAdapter {
                             channel.sendMessage(eb.build()).queue();
                         }
                         return;
-                    } else if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN)) {
+                    }
+                    if (Objects.equals(event.getMember(), guild.getOwner())) {
+                        command.run(event);
+                        return;
+                    }
+                    if (command.getAccessType().equals(CommandAccessType.SERVER_ADMIN)) {
                         if (sqlManager.readGuild(guild.getId()).isAdmin_mode()) {
                             if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotaccessroleid()))) {
                                 command.run(event);
-                                return;
                             } else {
                                 EmbedBuilder eb = new EmbedBuilder();
                                 eb
@@ -104,12 +107,10 @@ public class CommandManager extends ListenerAdapter {
                                         .setColor(Constants.VESTRIMU_PURPLE)
                                         .setFooter("Vestrimu", Constants.ICON_URL);
                                 channel.sendMessage(eb.build()).queue();
-                                return;
                             }
                         } else {
                             if (event.getMember().equals(guild.getOwner())) {
                                 command.run(event);
-                                return;
                             } else {
                                 EmbedBuilder eb = new EmbedBuilder();
                                 eb
@@ -118,14 +119,13 @@ public class CommandManager extends ListenerAdapter {
                                         .setColor(Constants.VESTRIMU_PURPLE)
                                         .setFooter("Vestrimu", Constants.ICON_URL);
                                 channel.sendMessage(eb.build()).queue();
-                                return;
                             }
                         }
+                        return;
                     } else if (command.getAccessType().equals(CommandAccessType.SERVER_MOD)) {
                         if (sqlManager.readGuild(guild.getId()).isAdmin_mode()) {
                             if (event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotmodroleid())) && event.getMember().getRoles().contains(guild.getRoleById(configuration.getBotaccessroleid()))) {
                                 command.run(event);
-                                return;
                             } else {
                                 EmbedBuilder eb = new EmbedBuilder();
                                 eb
@@ -134,12 +134,10 @@ public class CommandManager extends ListenerAdapter {
                                         .setColor(Constants.VESTRIMU_PURPLE)
                                         .setFooter("Vestrimu", Constants.ICON_URL);
                                 channel.sendMessage(eb.build()).queue();
-                                return;
                             }
                         } else {
                             if (event.getMember().equals(guild.getOwner())) {
                                 command.run(event);
-                                return;
                             } else {
                                 EmbedBuilder eb = new EmbedBuilder();
                                 eb
@@ -148,9 +146,22 @@ public class CommandManager extends ListenerAdapter {
                                         .setColor(Constants.VESTRIMU_PURPLE)
                                         .setFooter("Vestrimu", Constants.ICON_URL);
                                 channel.sendMessage(eb.build()).queue();
-                                return;
                             }
                         }
+                        return;
+                    } else if (command.getAccessType().equals(CommandAccessType.BETA_TESTER)) {
+                        if (sqlManager.getBetaTesters().contains(event.getMember().getIdLong())) {
+                            command.run(event);
+                        } else {
+                            EmbedBuilder eb = new EmbedBuilder();
+                            eb
+                                    .setTitle("Sorry")
+                                    .setDescription("That command can only be used by beta testers, register with `" + configuration.getPrefix() + "betatester` to use this command")
+                                    .setColor(Constants.VESTRIMU_PURPLE)
+                                    .setFooter("Vestrimu", Constants.ICON_URL);
+                            channel.sendMessage(eb.build()).queue();
+                        }
+                        return;
                     }
                     command.run(event);
                 }

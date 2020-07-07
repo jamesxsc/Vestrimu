@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class EvaluateCommand extends Command {
-    @Inject private SQLManager sqlManager;
+
+    @Inject
+    private SQLManager sqlManager;
 
     private ScriptEngine scriptEngine;
 
@@ -41,14 +43,14 @@ public class EvaluateCommand extends Command {
                     "Packages.net.dv8tion.jda.core.events.message," +
                     "Packages.com.georlegacy.general.vestrimu," +
                     "Packages.com.rmtheis.yandtran" +
-            ");");
+                    ");");
         } catch (ScriptException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         long currentTime = System.currentTimeMillis();
 
         Message message = event.getMessage();
@@ -105,6 +107,7 @@ public class EvaluateCommand extends Command {
     }
 
     private class SQL {
+
         public Object evalStatement(String query) {
             try (Connection connection = DriverManager.getConnection("jdbc:mysql://db.615283.net/vestrimu", SecretConstants.SQL_USER, SecretConstants.SQL_PASS)) {
                 Statement statement = connection.createStatement();
@@ -113,6 +116,7 @@ public class EvaluateCommand extends Command {
                 return ex;
             }
         }
+
     }
 
 }

@@ -1,12 +1,13 @@
 package com.georlegacy.general.vestrimu.commands;
 
+import com.georlegacy.general.vestrimu.ActivityUtil;
 import com.georlegacy.general.vestrimu.core.Command;
 import com.georlegacy.general.vestrimu.core.objects.enumeration.CommandAccessType;
 import com.georlegacy.general.vestrimu.util.Constants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +22,7 @@ public class UserInfoCommand extends Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(GuildMessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         Message message = event.getMessage();
 
@@ -57,13 +58,13 @@ public class UserInfoCommand extends Command {
                                         "<:offline:469796710860718080> `OFFLINE`"), true);
         if (!member.getActivities().isEmpty()) {
             for (Activity activity : member.getActivities()) {
-                //todo
-                eb.addField(activity.getType().name(), "`" + activity.getName() + "`" + (activity.isRich() ? "<:richpresence:469804127900270602>" : ""), true);
+                eb.addField(ActivityUtil.getDisplayNameFromKey(activity.getType().getKey()), "`" + activity.getName() + "`" + (activity.isRich() ? "<:richpresence:469804127900270602>" : ""), true);
             }
         }
         eb
                 .addField("Account Type", user.isBot() ? "Bot" : "User", true)
                 .addField("Avatar", "[`Current Avatar`](" + user.getAvatarUrl() + ")\n[`Default Avatar`](" + user.getDefaultAvatarUrl() + " \"Default Avatar\")", true)
+                .addField("Boosting Since", member.getTimeBoosted() == null ? "Not boosting" : member.getTimeBoosted().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss z")), true)
                 .addField("Roles", roleBuilder.toString(), false)
                 .addField("Account Created", user.getTimeCreated().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss z")), true)
                 .addField("Joined Server", member.getTimeJoined().toLocalDateTime().atZone(ZoneId.of("GMT")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss z")), true)
