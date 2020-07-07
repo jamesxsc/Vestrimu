@@ -25,7 +25,7 @@ public class HungerGamesCommand extends Command {
     private SQLManager sqlManager;
 
     public HungerGamesCommand() {
-        super(new String[]{"hungergames", "hg"}, "Play hunger games!", "", CommandAccessType.BETA_TESTER, false);
+        super(new String[]{"hungergames", "hg"}, "Play hunger games! [WIP]", "", CommandAccessType.BETA_TESTER, false);
     }
 
     @Override

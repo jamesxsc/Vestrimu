@@ -17,7 +17,6 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.sharding.DefaultShardManager;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import org.slf4j.Logger;
@@ -68,8 +67,6 @@ public class Vestrimu {
     private EvaluateCommand evaluateCommand;
     @Inject
     private StopCommand stopCommand;
-    @Inject
-    private RecordCommand recordCommand;
 
     @Inject
     private AccessRequiredForHelpToggleCommand accessRequiredForHelpToggleCommand;
@@ -88,7 +85,14 @@ public class Vestrimu {
     private PurgeCommand purgeCommand;
 
     @Inject
+    private RecordCommand recordCommand;
+    @Inject
+    private HungerGamesCommand hungerGamesCommand;
+
+    @Inject
     private HelpCommand helpCommand;
+    @Inject
+    private BetaTesterCommand betaTesterCommand;
     @Inject
     private GuildInfoCommand guildInfoCommand;
     @Inject
@@ -99,10 +103,6 @@ public class Vestrimu {
     private UserInfoCommand userInfoCommand;
     @Inject
     private BehaviourInfoCommand behaviourInfoCommand;
-    @Inject
-    private HungerGamesCommand hungerGamesCommand;
-    @Inject
-    private BetaTesterCommand betaTesterCommand;
 
     @Getter
     private ShardManager shardManager;
@@ -146,7 +146,6 @@ public class Vestrimu {
         // Adding commands
         commandManager.addCommand(evaluateCommand);
         commandManager.addCommand(stopCommand);
-        commandManager.addCommand(recordCommand);
 
         commandManager.addCommand(accessRequiredForHelpToggleCommand);
         commandManager.addCommand(restoreCommand);
@@ -157,14 +156,16 @@ public class Vestrimu {
         commandManager.addCommand(kickCommand);
         commandManager.addCommand(purgeCommand);
 
+        commandManager.addCommand(recordCommand);
+        commandManager.addCommand(hungerGamesCommand);
+
         commandManager.addCommand(helpCommand);
+        commandManager.addCommand(betaTesterCommand);
         commandManager.addCommand(guildInfoCommand);
         commandManager.addCommand(statsCommand);
         commandManager.addCommand(translateCommand);
         commandManager.addCommand(userInfoCommand);
         commandManager.addCommand(behaviourInfoCommand);
-        commandManager.addCommand(hungerGamesCommand);
-        commandManager.addCommand(betaTesterCommand);
 
         webhookManager.loadWebhooks();
 

@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HelpCommand extends Command {
 
@@ -68,6 +69,7 @@ public class HelpCommand extends Command {
                                     ":no_entry: - Commands only for super admins\n" +
                                     ":warning: - Commands only for server admins\n" +
                                     ":regional_indicator_m: - Command only for server moderators" +
+                                    ":test_tube: - Command only for beta testers" +
                                     ":eight_pointed_black_star: - Commands for any user")
                             .build()
             );
@@ -96,8 +98,14 @@ public class HelpCommand extends Command {
                 continue;
             if (command.getAccessType().equals(CommandAccessType.SERVER_MOD) && (sqlManager.readGuild(event.getGuild().getId()).isAdmin_mode() ? !(event.getMember().getRoles().contains(event.getGuild().getRoleById(sqlManager.readGuild(event.getGuild().getId()).getBotmodroleid()))) : !(event.getMember().isOwner())))
                 continue;
+            if (command.getAccessType().equals(CommandAccessType.BETA_TESTER) && !(sqlManager.getBetaTesters().contains(Objects.requireNonNull(event.getMember()).getIdLong())))
+                continue;
             commands.addField(
-                    (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " : command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " : command.getAccessType().equals(CommandAccessType.SERVER_MOD) ? ":regional_indicator_m: " : ":eight_pointed_black_star: ") +
+                    (command.getAccessType().equals(CommandAccessType.SUPER_ADMIN) ? ":no_entry: " :
+                            command.getAccessType().equals(CommandAccessType.SERVER_ADMIN) ? ":warning: " :
+                                    command.getAccessType().equals(CommandAccessType.SERVER_MOD) ? ":regional_indicator_m: " :
+                                            command.getAccessType().equals(CommandAccessType.BETA_TESTER) ? ":test_tube:" :
+                                                    ":eight_pointed_black_star: ") +
                             configuration.getPrefix() +
                             String.join("|", command.getNames()),
                     command.getDescription() +
