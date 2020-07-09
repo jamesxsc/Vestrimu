@@ -1,5 +1,6 @@
 package com.georlegacy.general.vestrimu;
 
+import com.georlegacy.general.vestrimu.api.ExpansionManager;
 import com.georlegacy.general.vestrimu.commands.*;
 import com.georlegacy.general.vestrimu.commands.behaviour.BehaviourInfoCommand;
 import com.georlegacy.general.vestrimu.commands.behaviour.KickCommand;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +42,8 @@ public class Vestrimu {
     @Getter
     @Inject
     private SQLManager sqlManager;
+    @Getter
+    private final ExpansionManager expansionManager;
     @Getter
     @Inject
     private HungerGamesManager hungerGamesManager;
@@ -169,21 +173,23 @@ public class Vestrimu {
 
         webhookManager.loadWebhooks();
 
+        getLogger().info("Loading expansions...");
+        expansionManager = new ExpansionManager(this);
+
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
         threadpool.scheduleAtFixedRate(clearTempDirectory, 1, 45, TimeUnit.MINUTES);
 
-        shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.ONLINE);
-
+        Objects.requireNonNull(shardManager.getShardById(0)).getPresence().setStatus(OnlineStatus.ONLINE);
     }
 
     private void shutdown() {
         logger.info("Preparing to shut down Vestrimu.");
-        shardManager.getShardById(0).getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+        Objects.requireNonNull(shardManager.getShardById(0)).getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
         try {
             Thread.sleep(5000);
             logger.info("Shutting down Vestrimu");
             sqlManager.getConnection().close();
-            shardManager.getShardById(0).shutdownNow();
+            Objects.requireNonNull(shardManager.getShardById(0)).shutdownNow();
         } catch (InterruptedException | SQLException e) {
             e.printStackTrace();
         }

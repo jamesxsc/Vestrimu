@@ -68,8 +68,8 @@ public class HelpCommand extends Command {
                                     "The proceedure is the same for the moderation role, which is currently `@" + event.getGuild().getRoleById(configuration.getBotmodroleid()).getName() + "`\n" +
                                     ":no_entry: - Commands only for super admins\n" +
                                     ":warning: - Commands only for server admins\n" +
-                                    ":regional_indicator_m: - Command only for server moderators" +
-                                    ":test_tube: - Command only for beta testers" +
+                                    ":regional_indicator_m: - Command only for server moderators\n" +
+                                    ":test_tube: - Command only for beta testers\n" +
                                     ":eight_pointed_black_star: - Commands for any user")
                             .build()
             );
