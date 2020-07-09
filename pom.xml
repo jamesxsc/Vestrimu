@@ -4,8 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.georlegacy.general.vestrimu</groupId>
+    <groupId>com.georlegacy.general</groupId>
     <artifactId>Vestrimu</artifactId>
+    <packaging>jar</packaging>
     <version>0.1-DEV</version>
 
     <name>${artifactId}</name>
@@ -22,7 +23,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -30,19 +31,10 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <relocations>
-                                <relocation>
-                                    <pattern>net.dv8tion.jda</pattern>
-                                    <shadedPattern>com.georlegacy.general.vestrimu.dependencies.jda</shadedPattern>
-                                </relocation>
-                            </relocations>
                             <minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -52,6 +44,7 @@
                 <directory>${basedir}/src/main/resources/</directory>
                 <includes>
                     <include>icon.png</include>
+                    <include>credentials.properties</include>
                     <include>logback.xml</include>
                 </includes>
             </resource>

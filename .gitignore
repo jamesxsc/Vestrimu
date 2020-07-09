@@ -1,6 +1,7 @@
 target
 .idea
 expansions
+tmp
 *.iml
-src/main/java/com/georlegacy/general/vestrimu/SecretConstants.java
+src/main/resources/credentials.properties
 .gitattributes
